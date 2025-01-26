@@ -3,8 +3,10 @@
 namespace Jot\HfValidatorTest\Validators;
 
 use Jot\HfValidator\Validator\CNPJ;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
+#[CoversNothing]
 class CNPJTest extends TestCase
 {
     /**

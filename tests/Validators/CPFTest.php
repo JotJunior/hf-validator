@@ -3,11 +3,10 @@
 namespace Jot\HfValidatorTest\Validators;
 
 use Jot\HfValidator\Validator\CPF;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Test class for CPF class.
- */
+#[CoversNothing]
 class CPFTest extends TestCase
 {
     private CPF $CPFObject;

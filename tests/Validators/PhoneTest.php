@@ -3,8 +3,11 @@
 namespace Jot\HfValidatorTest\Validators;
 
 use Jot\HfValidator\Validator\Phone;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+#[CoversNothing]
 class PhoneTest extends TestCase
 {
     /** @var Phone */
@@ -16,9 +19,7 @@ class PhoneTest extends TestCase
         $this->phoneValidator = new Phone();
     }
 
-    /**
-     * @dataProvider phoneValidationProvider
-     */
+    #[DataProvider('phoneValidationProvider')]
     public function testValidate(string $phone, string $countryCode, bool $isValid, ?string $expectedException): void
     {
 
