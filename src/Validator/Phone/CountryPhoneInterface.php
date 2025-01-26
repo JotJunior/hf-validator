@@ -2,7 +2,7 @@
 
 namespace Jot\HfValidator\Validator\Phone;
 
-interface CountryValidatorInterface
+interface CountryPhoneInterface
 {
     public function validate(string $phone): bool;
 }

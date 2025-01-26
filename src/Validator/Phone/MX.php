@@ -2,19 +2,19 @@
 
 namespace Jot\HfValidator\Validator\Phone;
 
-class US implements CountryValidatorInterface
+class MX extends AbstractPhoneValidator implements CountryPhoneInterface
 {
-    private CountryPhonePatterns $pattern = CountryPhonePatterns::MX;
+    protected CountryPhonePatterns $pattern = CountryPhonePatterns::MX;
+
+    protected array $validAreaCodes = [];
 
     /**
-     * Validates a given phone number against a predefined pattern.
-     *
-     * @param string $phone The phone number to validate.
-     * @return bool Returns true if the phone number matches the pattern, otherwise false.
+     * @TODO Implement the logic to dynamically validate area codes
      */
     public function validate(string $phone): bool
     {
-        return preg_match(sprintf('/^\%s$/', $this->pattern->value), $phone) === 1;
+        $regexPattern = $this->buildPattern($this->pattern);
+        return preg_match($regexPattern, $phone) === 1;
     }
 
 }

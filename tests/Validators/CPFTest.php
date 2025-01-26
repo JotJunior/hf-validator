@@ -1,7 +1,8 @@
 <?php
 
-namespace Jot\HfValidator\Validator;
+namespace Jot\HfValidatorTest\Validators;
 
+use Jot\HfValidator\Validator\CPF;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -3,7 +3,6 @@
 namespace Jot\HfValidator\Validator;
 
 use Attribute;
-use Jot\HfValidator\Validator\Phone\BR;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
 class Phone

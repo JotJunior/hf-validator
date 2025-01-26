@@ -1,6 +1,6 @@
 <?php
 
-namespace Jot\HfValidator\Validator\Tests;
+namespace Jot\HfValidatorTest\Validators;
 
 use Jot\HfValidator\Validator\CNPJ;
 use PHPUnit\Framework\TestCase;
