@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jot\HfUtils;
-
-use Jot\HfValidator\BootValidatorListener;
+namespace Jot\HfValidator;
 
 class ConfigProvider
 {
