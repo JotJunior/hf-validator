@@ -2,21 +2,18 @@
 
 namespace Jot\HfValidatorTest\Validators;
 
-use Jot\HfValidator\Validator\Phone;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use Jot\HfValidator\Phone;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-#[CoversNothing]
+#[CoversClass(Phone::class)]
 class PhoneTest extends TestCase
 {
-    /** @var Phone */
-    private $phoneValidator;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->phoneValidator = new Phone();
     }
 
     #[DataProvider('phoneValidationProvider')]
@@ -27,7 +24,8 @@ class PhoneTest extends TestCase
             $this->expectException($expectedException);
         }
 
-        $result = $this->phoneValidator->validate($phone, $countryCode);
+        $phone = new Phone(phone: $phone, countryCode: $countryCode);
+        $result = $phone->validate();
 
         if ($isValid) {
             $this->assertTrue($result);

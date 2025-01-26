@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Jot\HfUtils;
 
+use Jot\HfValidator\BootValidatorListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -11,7 +13,9 @@ class ConfigProvider
         return [
             'dependencies' => [],
             'commands' => [],
-            'listeners' => [],
+            'listeners' => [
+                BootValidatorListener::class
+            ],
             'publish' => [],
         ];
     }
