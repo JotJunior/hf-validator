@@ -6,9 +6,13 @@ namespace Jot\HfValidator;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Annotation\Listener;
-use Hyperf\Framework\Event\BootApplication;
-use Psr\Container\ContainerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+use Jot\HfValidator\Validator\CNPJ;
+use Jot\HfValidator\Validator\CPF;
+use Jot\HfValidator\Validator\Elastic;
+use Jot\HfValidator\Validator\Phone;
+use Psr\Container\ContainerInterface;
 
 #[Listener]
 class BootValidatorListener implements ListenerInterface
@@ -35,7 +39,10 @@ class BootValidatorListener implements ListenerInterface
 
         foreach ($annotations as $annotation) {
             $validators = AnnotationCollector::getPropertiesByAnnotation($annotation);
-            print_r($validators);
+            foreach ($validators as $class => $validator) {
+                $validator->setPhone('aaa');
+            }
+
         }
     }
 }

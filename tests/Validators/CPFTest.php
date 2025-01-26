@@ -2,7 +2,7 @@
 
 namespace Jot\HfValidatorTest\Validators;
 
-use Jot\HfValidator\CPF;
+use Jot\HfValidator\Validator\CPF;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
@@ -16,25 +16,21 @@ class CPFTest extends TestCase
 
     public function testValidCPF(): void
     {
-        $docNumber = new CPF('52998224725');
-        $this->assertTrue($docNumber->validate());
+        $this->assertTrue((new CPF())->validate(value: '52998224725'));
     }
 
     public function testInvalidCPF(): void
     {
-        $docNumber = new CPF('12345678901');
-        $this->assertFalse($docNumber->validate());
+        $this->assertFalse((new CPF())->validate(value: '12345678901'));
     }
 
     public function testMalformedCPF(): void
     {
-        $docNumber = new CPF('A123B567C901');
-        $this->assertFalse($docNumber->validate());
+        $this->assertFalse((new CPF())->validate(value: 'A123B567C901'));
     }
 
     public function testRepeatedDigitsCPF(): void
     {
-        $docNumber = new CPF('11111111111');
-        $this->assertFalse($docNumber->validate());
+        $this->assertFalse((new CPF())->validate(value: '11111111111'));
     }
 }

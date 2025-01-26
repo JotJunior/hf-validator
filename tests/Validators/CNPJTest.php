@@ -2,7 +2,7 @@
 
 namespace Jot\HfValidatorTest\Validators;
 
-use Jot\HfValidator\CNPJ;
+use Jot\HfValidator\Validator\CNPJ;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
@@ -16,25 +16,21 @@ class CNPJTest extends TestCase
 
     public function testValidateWithValidCNPJ()
     {
-        $docNumber = new CNPJ(number: '32403065000174');
-        $this->assertTrue($docNumber->validate());
+        $this->assertTrue((new CNPJ())->validate('32403065000174'));
     }
 
     public function testValidateWithInvalidCNPJ()
     {
-        $docNumber = new CNPJ(number: '04.000.000/0000-00');
-        $this->assertFalse($docNumber->validate());
+        $this->assertFalse((new CNPJ())->validate('04.000.000/0000-00'));
     }
 
     public function testValidateWithValidAndSanitizedCNPJ()
     {
-        $docNumber = new CNPJ(number: '32403065000174');
-        $this->assertTrue($docNumber->validate());
+        $this->assertTrue((new CNPJ())->validate('32403065000174'));
     }
 
     public function testValidateWithInvalidAndSanitizedCNPJ()
     {
-        $docNumber = new CNPJ(number: '04000000000000');
-        $this->assertFalse($docNumber->validate());
+        $this->assertFalse((new CNPJ())->validate('04000000000000'));
     }
 }
