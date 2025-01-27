@@ -11,18 +11,18 @@ class CPF extends AbstractAttribute implements ValidatorInterface
 {
     private const CPF_LENGTH = 11;
 
-    public function validate(string $value, array $options = []): bool
+    public function validate(mixed $value): bool
     {
         $sanitizedCpf = $this->sanitizeCpf($value);
 
         if (!$this->hasValidLength($sanitizedCpf) || $this->hasRepeatedDigits($sanitizedCpf)) {
-            $this->errors[] = 'Malformed CPF number';
+            $this->errors[] = 'Malformed CPF number.';
             return false;
         }
 
         for ($position = 9; $position < self::CPF_LENGTH; $position++) {
             if (!$this->validateCpfDigit($sanitizedCpf, $position)) {
-                $this->errors[] = 'Invalid CPF number';
+                $this->errors[] = 'Invalid CPF.';
                 return false;
             }
         }

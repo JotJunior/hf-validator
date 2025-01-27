@@ -11,22 +11,21 @@ use Jot\HfValidator\ValidatorInterface;
 class Elastic extends AbstractAttribute implements ValidatorInterface
 {
 
-    protected QueryBuilder $queryBuilder;
+    public function __construct(protected string $index, protected string $field, protected QueryBuilder $queryBuilder)
+    {
+    }
 
     /**
-     * Validates a value against given criteria by querying a database or dataset.
+     * Validates whether the given value exists in the specified field of the index.
      *
      * @param string $value The value to be validated.
-     * @param array $options An associative array of options where:
-     *                        - 'index' represents the dataset or table to query.
-     *                        - 'field' specifies the field or column to match the value against.
-     * @return bool Returns true if the value is found in the specified field of the dataset, otherwise false.
+     * @return bool Returns true if the value exists, false otherwise.
      */
-    public function validate(string $value, array $options = []): bool
+    public function validate(mixed $value): bool
     {
         return $this->queryBuilder
-                ->from($options['index'])
-                ->where($options['field'], $value)
+                ->from($this->index)
+                ->where($this->field, $value)
                 ->count() > 0;
     }
 }

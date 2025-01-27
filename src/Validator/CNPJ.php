@@ -13,23 +13,32 @@ class CNPJ extends AbstractAttribute implements ValidatorInterface
     private const WEIGHTS_FIRST = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
     private const WEIGHTS_SECOND = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
+
     /**
-     * Validates a CNPJ number by verifying its format and checksum digits.
+     * Validates a CNPJ (Cadastro Nacional da Pessoa Jurídica) number.
      *
-     * @return bool Returns true if the CNPJ is valid, otherwise false.
+     * @param string $value The CNPJ value to be validated.
+     * @return bool True if the CNPJ is valid, false otherwise.
      */
-    public function validate(string $value, array $options = []): bool
+    public function validate(mixed $value): bool
     {
         $sanitizedCNPJ = $this->sanitizeCNPJ($value);
 
         if (!$this->isValidFormat($sanitizedCNPJ)) {
+            $this->errors[] = 'Invalid CNPJ format.';
             return false;
         }
 
         $firstVerifierDigit = $this->calculateDigit(substr($sanitizedCNPJ, 0, 12), self::WEIGHTS_FIRST);
         $secondVerifierDigit = $this->calculateDigit(substr($sanitizedCNPJ, 0, 13), self::WEIGHTS_SECOND);
 
-        return $sanitizedCNPJ[12] == $firstVerifierDigit && $sanitizedCNPJ[13] == $secondVerifierDigit;
+        $isValid = $sanitizedCNPJ[12] == $firstVerifierDigit && $sanitizedCNPJ[13] == $secondVerifierDigit;
+
+        if (!$isValid) {
+            $this->errors[] = 'Invalid CNPJ.';
+        }
+
+        return $isValid;
     }
 
     /**

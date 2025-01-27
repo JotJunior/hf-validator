@@ -4,27 +4,38 @@ namespace Jot\HfValidator\Validator;
 
 use Attribute;
 use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\ValidatorInterface;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Phone extends AbstractAttribute
+class Phone extends AbstractAttribute implements ValidatorInterface
 {
 
+    public function __construct(protected string $countryCode)
+    {
+    }
+
+
     /**
-     * Validates a phone number based on the given value and country-specific options.
+     * Validates the given value using the appropriate phone number validator
+     * based on the country code.
      *
      * @param string $value The phone number to be validated.
-     * @param array $options Optional configuration parameters. Expected key 'countryCode' to specify the country for validation. Defaults to 'BR'.
-     * @return bool Returns true if the phone number is valid, false otherwise.
-     * @throws \InvalidArgumentException If no validator is found for the specified country code.
+     * @return bool Returns true if the phone number is valid, otherwise false.
      */
-    public function validate(string $value, array $options = []): bool
+    public function validate(mixed $value): bool
     {
-        $countryCode = $options['countryCode'] ?? 'BR';
-        $validatorClass = __NAMESPACE__ . '\\Phone\\' . strtoupper($options['countryCode']);
+        $validatorClass = __NAMESPACE__ . '\\Phone\\' . strtoupper($this->countryCode);
         if (!class_exists($validatorClass)) {
-            throw new \InvalidArgumentException("No validator found for country code: '{$countryCode}'. Please provide a valid country code.");
+            $this->errors[] = sprintf('No validator found for country code: %s. Please provide a valid country code.', $this->countryCode);
+            return false;
         }
 
-        return (new $validatorClass())->validate($value);
+        $isValid = (new $validatorClass())->validate($value);
+
+        if (!$isValid) {
+            $this->errors[] = 'Invalid phone number.';
+        }
+
+        return $isValid;
     }
 }
