@@ -1,6 +1,6 @@
 <?php
 
-namespace Jot\HfValidatorTest\Validators;
+namespace Jot\HfValidatorTest\Validator;
 
 use Jot\HfValidator\Validator\CPF;
 use PHPUnit\Framework\Attributes\CoversNothing;

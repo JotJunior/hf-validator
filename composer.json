@@ -29,7 +29,8 @@
     "jot/hf-elastic": "^0.16"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.5"
+    "phpunit/phpunit": "^10.5",
+    "mockery/mockery": "^1.6"
   },
   "scripts": {
     "test": "phpunit"

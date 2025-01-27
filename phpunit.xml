@@ -16,7 +16,7 @@
 
     <testsuites>
         <testsuite name="EntityValidatorTests">
-            <directory>tests/Validators</directory>
+            <directory>tests/Validator</directory>
         </testsuite>
     </testsuites>
 </phpunit>
