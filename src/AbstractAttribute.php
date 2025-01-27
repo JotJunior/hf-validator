@@ -2,6 +2,7 @@
 
 namespace Jot\HfValidator;
 
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 class AbstractAttribute extends AbstractAnnotation
@@ -12,6 +13,11 @@ class AbstractAttribute extends AbstractAnnotation
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    public function setContainer(?ContainerInterface $container)
+    {
+
     }
 
 }

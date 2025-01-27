@@ -3,6 +3,7 @@
 namespace Jot\HfValidator\Validator;
 
 use Attribute;
+use Hyperf\Contract\ContainerInterface;
 use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\AbstractAttribute;
 use Jot\HfValidator\ValidatorInterface;
@@ -10,11 +11,16 @@ use Jot\HfValidator\ValidatorInterface;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
 class Elastic extends AbstractAttribute implements ValidatorInterface
 {
+    protected ?QueryBuilder $queryBuilder;
 
-    public function __construct(protected string $index, protected string $field, protected ?QueryBuilder $queryBuilder = null)
+    public function __construct(protected string $index, protected string $field)
     {
     }
 
+    public function setContainer(?ContainerInterface $container): void
+    {
+        $this->queryBuilder = $container->get(QueryBuilder::class);
+    }
 
     /**
      * Validates the given value against a specific index and field in the query builder.
@@ -31,9 +37,15 @@ class Elastic extends AbstractAttribute implements ValidatorInterface
         if (is_object($value) && method_exists($value, 'getId')) {
             $value = $value->getId();
         }
-        return $this->queryBuilder
+        $isValid = $this->queryBuilder
                 ->from($this->index)
                 ->where($this->field, $value)
                 ->count() > 0;
+
+        if (!$isValid) {
+            $this->errors[] = 'The given value does not exist in the specified index and field.';
+        }
+
+        return $isValid;
     }
 }
