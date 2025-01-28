@@ -11,6 +11,10 @@ class Required extends AbstractAttribute implements ValidatorInterface
 {
     private const ERROR_MESSAGE = 'This field is required.';
 
+    public function __construct(protected readonly bool $skipUpdates = false)
+    {
+    }
+
     /**
      * Validates the provided value based on specific conditions.
      *
@@ -19,6 +23,9 @@ class Required extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
+        if ($this->skipUpdates) {
+            return true;
+        }
         if ($this->isNull($value) || $this->isEmptyString($value) || $this->isInvalidObject($value)) {
             $this->addError(self::ERROR_MESSAGE);
             return false;
