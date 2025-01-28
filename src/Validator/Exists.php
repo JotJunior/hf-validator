@@ -9,7 +9,7 @@ use Jot\HfValidator\AbstractAttribute;
 use Jot\HfValidator\ValidatorInterface;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Elastic extends AbstractAttribute implements ValidatorInterface
+class Exists extends AbstractAttribute implements ValidatorInterface
 {
     protected ?QueryBuilder $queryBuilder;
 
