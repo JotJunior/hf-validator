@@ -7,6 +7,6 @@ interface ValidatorInterface
 
     public function validate(mixed $value): bool;
 
-    public function getErrors(): array;
+    public function consumeErrors(): array;
 
 }

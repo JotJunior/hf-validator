@@ -23,7 +23,8 @@ class Regex extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
-        $result = preg_match($this->pattern, $value) === 1;
+
+        $result = preg_match($this->pattern, $value) > 0;
 
         if (!$result) {
             $this->errors = [
@@ -41,15 +42,13 @@ class Regex extends AbstractAttribute implements ValidatorInterface
         $explanation = [];
 
         $patterns = [
-            '/^\^/' => 'Start of the string.',
             '/\.\*/' => 'Any sequence of characters (including empty).',
             '/\[a-z\]/' => 'A lowercase letter (from "a" to "z").',
             '/\[A-Z\]/' => 'An uppercase letter (from "A" to "Z").',
             '/\\\d/' => 'A digit (from "0" to "9").',
             '/\[(.*?)\]/' => 'Allowed set of characters: $1.',
-            '/\{(\d+),\}/' => 'At least $1 characters.',
+            '/\{(\d),\}/' => 'At least $1 characters.',
             '/(?=\.\*\[(.*?)\])/' => 'Must contain at least one of the characters: $1.',
-            '/\$/' => 'End of the string.',
         ];
 
         foreach ($patterns as $pattern => $description) {

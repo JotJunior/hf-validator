@@ -7,17 +7,24 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 
 class AbstractAttribute extends AbstractAnnotation
 {
-    protected array $errors = [];
-    protected array $options = [];
 
-    public function getErrors(): array
+    protected array $errors = [];
+
+    public function consumeErrors(): array
     {
-        return $this->errors;
+        $errors = $this->errors;
+        $this->resetErrors();
+        return $errors;
     }
 
     public function setContainer(?ContainerInterface $container)
     {
 
+    }
+
+    public function resetErrors(): void
+    {
+        $this->errors = [];
     }
 
 }
