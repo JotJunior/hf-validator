@@ -30,6 +30,9 @@ class Exists extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
+        if (empty($value)) {
+            return true;
+        }
         if (is_object($value) && !method_exists($value, 'getId')) {
             $this->errors[] = 'The given value is not a valid Entity object.';
             return false;
@@ -37,6 +40,7 @@ class Exists extends AbstractAttribute implements ValidatorInterface
         if (is_object($value) && method_exists($value, 'getId')) {
             $value = $value->getId();
         }
+
         $isValid = $this->queryBuilder
                 ->from($this->index)
                 ->where($this->field, $value)
