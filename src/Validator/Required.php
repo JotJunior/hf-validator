@@ -11,7 +11,7 @@ class Required extends AbstractAttribute implements ValidatorInterface
 {
     private const ERROR_MESSAGE = 'This field is required.';
 
-    public function __construct(protected readonly bool $skipUpdates = false)
+    public function __construct(protected readonly bool $skipUpdates = true)
     {
     }
 
@@ -77,4 +77,16 @@ class Required extends AbstractAttribute implements ValidatorInterface
     {
         $this->errors[] = $message;
     }
+
+    /**
+     * Determines whether updates should be skipped.
+     *
+     * @return bool Returns true if updates are to be skipped, otherwise false.
+     */
+    public function skipUpdates(): bool
+    {
+        return $this->skipUpdates;
+    }
+
+
 }

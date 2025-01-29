@@ -34,14 +34,5 @@
   },
   "scripts": {
     "test": "phpunit"
-  },
-  "extra": {
-    "hyperf": {
-      "annotations": {
-        "scan": [
-          "src"
-        ]
-      }
-    }
   }
 }

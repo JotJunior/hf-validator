@@ -27,4 +27,9 @@ class AbstractAttribute extends AbstractAnnotation
         $this->errors = [];
     }
 
+    public function skipUpdates(): bool
+    {
+        return true;
+    }
+
 }

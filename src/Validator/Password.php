@@ -39,12 +39,22 @@ class Password extends AbstractAttribute implements ValidatorInterface
 
     public function validate($value): bool
     {
+        if ($this->isEmptyPassword($value)) {
+            return false;
+        }
+
         $pattern = sprintf('/^%s$/', implode('', $this->patterns));
         $isValid = preg_match($pattern, $value) > 0;
         if (!$isValid) {
             $this->errors[] = $this->getValidationMessage();
         }
         return $isValid;
+    }
+
+    protected function isEmptyPassword(mixed $value): bool
+    {
+        $this->errors[] = 'Password is required.';
+        return empty($value);
     }
 
     protected function getValidationMessage(): string
