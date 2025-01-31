@@ -2,54 +2,69 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Hyperf\Contract\ContainerInterface;
-use Jot\HfElastic\QueryBuilder;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Exists extends AbstractAttribute implements ValidatorInterface
+
+class Exists extends AbstractValidator implements ValidatorInterface
 {
-    protected ?QueryBuilder $queryBuilder;
 
-    public function __construct(protected string $index, protected string $field)
-    {
-    }
+    public const ERROR_INVALID_ENTITY = 'The given value is not a valid Entity object.';
+    public const ERROR_VALUE_DOES_NOT_EXIST = 'The given value does not exist in the specified index and field.';
+    private string $index;
+    private string $field;
 
-    public function setContainer(?ContainerInterface $container): void
-    {
-        $this->queryBuilder = $container->get(QueryBuilder::class);
-    }
-
-    /**
-     * Validates the given value against a specific index and field in the query builder.
-     *
-     * @param mixed $value The value to validate, which can be an object or any other type.
-     * @return bool Returns true if the value exists in the specified index and field, otherwise false.
-     */
     public function validate(mixed $value): bool
     {
         if (empty($value)) {
             return true;
         }
-        if (is_object($value) && !method_exists($value, 'getId')) {
-            $this->errors[] = 'The given value is not a valid Entity object.';
+
+        if ($this->isEntityInvalid($value)) {
+            $this->addError('ERROR_INVALID_ENTITY', self::ERROR_INVALID_ENTITY);
             return false;
         }
-        if (is_object($value) && method_exists($value, 'getId')) {
-            $value = $value->getId();
+
+        $value = $this->extractEntityId($value);
+
+        if (!$this->doesValueExist($value)) {
+            $this->addError('ERROR_VALUE_DOES_NOT_EXIST', self::ERROR_VALUE_DOES_NOT_EXIST);
+            return false;
         }
 
-        $isValid = $this->queryBuilder
-                ->from($this->index)
-                ->where($this->field, $value)
-                ->count() > 0;
-
-        if (!$isValid) {
-            $this->errors[] = 'The given value does not exist in the specified index and field.';
-        }
-
-        return $isValid;
+        return true;
     }
+
+    private function isEntityInvalid(mixed $value): bool
+    {
+        return is_object($value) && !method_exists($value, 'getId');
+    }
+
+    private function extractEntityId(mixed $value): mixed
+    {
+        return is_object($value) && method_exists($value, 'getId') ? $value->getId() : $value;
+    }
+
+    private function doesValueExist(mixed $value): bool
+    {
+        return $this->queryBuilder
+                ->from($this->index)
+                ->where($this->field, '=', $value)
+                ->count() > 0;
+    }
+
+    public function setIndex(string $index): Exists
+    {
+        $this->index = $index;
+        return $this;
+    }
+
+    public function setField(string $field): Exists
+    {
+        $this->field = $field;
+        return $this;
+    }
+
+
 }
+

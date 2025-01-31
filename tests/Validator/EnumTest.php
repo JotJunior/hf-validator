@@ -2,23 +2,38 @@
 
 namespace Jot\HfValidatorTest\Validator;
 
+use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\Validator\Enum;
 use PHPUnit\Framework\TestCase;
 
-final class EnumTest extends TestCase
+class EnumTest extends TestCase
 {
-    public function testValidate(): void
+
+    protected Enum $enum;
+
+    protected function setUp(): void
     {
-        $arr = [null, false, 0, "0", "", []];
-        $enum = new Enum($arr);
-
-        foreach ($arr as $value) {
-            $this->assertTrue($enum->validate($value));
-        }
-
-        $unexpectedValues = [1, true, 'true', 'FALSE', 'Yes', 'No', ['No']];
-        foreach ($unexpectedValues as $value) {
-            $this->assertFalse($enum->validate($value));
-        }
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->enum = new Enum($queryBuilder);
+        $this->enum->setValues(['apple', 'banana', 'cherry']);
     }
+
+    public function testValidateExists(): void
+    {
+        $this->assertTrue($this->enum->validate('apple'));
+        $this->assertEmpty($this->enum->consumeErrors());
+    }
+
+    public function testValidateDoesNotExist(): void
+    {
+        $this->assertFalse($this->enum->validate('pineapple'));
+        $this->assertNotEmpty($this->enum->consumeErrors());
+    }
+
+    public function testValidateEmptyValue(): void
+    {
+        $this->assertTrue($this->enum->validate(''));
+        $this->assertEmpty($this->enum->consumeErrors());
+    }
+
 }

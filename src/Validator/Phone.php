@@ -2,18 +2,16 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Phone extends AbstractAttribute implements ValidatorInterface
+
+class Phone extends AbstractValidator implements ValidatorInterface
 {
 
-    public function __construct(protected string $countryCode)
-    {
-    }
-
+    public const ERROR_INVALID_PHONE_NUMBER = 'Invalid phone number.';
+    public const ERROR_INVALID_COUNTRY_CODE = 'No validator found for country code: %s. Please provide a valid country code.';
+    private string $countryCode = 'BR';
 
     /**
      * Validates the given value using the appropriate phone number validator
@@ -24,18 +22,30 @@ class Phone extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
+        if (empty($value)) {
+            return true;
+        }
+
         $validatorClass = __NAMESPACE__ . '\\Phone\\' . strtoupper($this->countryCode);
         if (!class_exists($validatorClass)) {
-            $this->errors[] = sprintf('No validator found for country code: %s. Please provide a valid country code.', $this->countryCode);
+            $this->addError('ERROR_INVALID_COUNTRY_CODE', self::ERROR_INVALID_COUNTRY_CODE, [$this->countryCode]);
             return false;
         }
 
         $isValid = (new $validatorClass())->validate($value);
 
         if (!$isValid) {
-            $this->errors[] = 'Invalid phone number.';
+            $this->addError('ERROR_INVALID_PHONE_NUMBER', self::ERROR_INVALID_PHONE_NUMBER);
         }
 
         return $isValid;
     }
+
+    public function setCountryCode(string $countryCode): Phone
+    {
+        $this->countryCode = $countryCode;
+        return $this;
+    }
+
+
 }

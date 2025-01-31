@@ -2,9 +2,9 @@
 
 namespace Jot\HfValidator\Validator\Phone;
 
-class CH extends AbstractPhoneValidator implements CountryPhoneInterface
+class CN extends AbstractPhoneValidator implements CountryPhoneInterface
 {
-    protected CountryPhonePatterns $pattern = CountryPhonePatterns::CH;
+    protected CountryPhonePatterns $pattern = CountryPhonePatterns::CN;
 
     protected array $validAreaCodes = [];
 

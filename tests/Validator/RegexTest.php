@@ -2,45 +2,45 @@
 
 namespace Jot\HfValidatorTest\Validator;
 
+use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\Validator\Regex;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class RegexTest
- * Tests for the `validate` method in the `Regex` class.
- */
 class RegexTest extends TestCase
 {
-    private Regex $regex;
+    private Regex $validator;
 
     protected function setUp(): void
     {
-        parent::setUp();
-
-        $this->regex = new Regex('/^[0-9]+$/');
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->validator = new Regex($queryBuilder);
     }
 
-    /**
-     * Test to validate a numeric value.
-     */
-    public function testValidateNumericValue(): void
+    public function testValidateWithValidValue(): void
     {
-        $this->assertTrue($this->regex->validate('1234'));
+        $this->validator->setPattern('/^[a-z]+$/');
+        $this->assertTrue($this->validator->validate('teststring'));
     }
 
-    /**
-     * Test to validate a non-numeric value.
-     */
-    public function testValidateNonNumericValue(): void
+    public function testValidateWithInvalidValue(): void
     {
-        $this->assertFalse($this->regex->validate('abcd'));
+        $this->validator->setPattern('/^[a-z]+$/');
+        $this->assertFalse($this->validator->validate('Test1234'));
     }
 
-    /**
-     * Test to validate an empty value.
-     */
-    public function testValidateEmptyValue(): void
+    public function testValidateWithEmptyValue(): void
     {
-        $this->assertFalse($this->regex->validate(''));
+        $this->assertTrue($this->validator->validate(''));
+    }
+
+    public function testValidateWithNull(): void
+    {
+        $this->assertTrue($this->validator->validate(null));
+    }
+
+    public function testValidateInvalidRegexPattern(): void
+    {
+        $this->validator->setPattern('/^$[a-z]+$/');
+        $this->assertTrue($this->validator->validate(null));
     }
 }

@@ -2,18 +2,16 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Regex extends AbstractAttribute implements ValidatorInterface
+
+class Regex extends AbstractValidator implements ValidatorInterface
 {
 
-    public function __construct(protected string $pattern)
-    {
-    }
-
+    public const ERROR_INVALID_REGEX = 'Invalid regex pattern.';
+    public const ERROR_INVALID_VALUE = 'Invalid value. Check if your string matches the following pattern:';
+    private string $pattern;
 
     /**
      * Validates the given value against a predefined pattern.
@@ -23,42 +21,28 @@ class Regex extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
-
-        $result = preg_match($this->pattern, $value) > 0;
-
-        if (!$result) {
-            $this->errors = [
-                'Invalid value. Check if your string matches the following pattern:',
-                ...$this->regexRules($this->pattern),
-            ];
+        if (empty($value)) {
+            return true;
         }
 
-        return $result;
+        if (@preg_match($this->pattern, '') !== false) {
+            $this->addError('ERROR_INVALID_REGEX', self::ERROR_INVALID_REGEX, [$this->pattern]);
+        }
 
+        $isValid = preg_match($this->pattern, $value) > 0;
+
+        if (!$isValid) {
+            $this->addError('ERROR_INVALID_VALUE', self::ERROR_INVALID_VALUE, [$this->pattern]);
+        }
+
+        return $isValid;
     }
 
-    protected function regexRules($regex): array
+    public function setPattern(string $pattern): Regex
     {
-        $explanation = [];
-
-        $patterns = [
-            '/\.\*/' => 'Any sequence of characters (including empty).',
-            '/\[a-z\]/' => 'A lowercase letter (from "a" to "z").',
-            '/\[A-Z\]/' => 'An uppercase letter (from "A" to "Z").',
-            '/\\\d/' => 'A digit (from "0" to "9").',
-            '/\[(.*?)\]/' => 'Allowed set of characters: $1.',
-            '/\{(\d),\}/' => 'At least $1 characters.',
-            '/(?=\.\*\[(.*?)\])/' => 'Must contain at least one of the characters: $1.',
-        ];
-
-        foreach ($patterns as $pattern => $description) {
-            if (preg_match($pattern, $regex, $matches)) {
-                $explanation[] = isset($matches[1])
-                    ? str_replace('$1', $matches[1], $description)
-                    : $description;
-            }
-        }
-
-        return empty($explanation) ? ['Invalid regex pattern.'] : $explanation;
+        $this->pattern = $pattern;
+        return $this;
     }
+
+
 }

@@ -2,25 +2,37 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Email extends AbstractAttribute implements ValidatorInterface
+
+class Email extends AbstractValidator implements ValidatorInterface
 {
 
-    private const ERROR_INVALID_EMAIL = 'Invalid email';
-
-    public function __construct(protected bool $checkDomain = false)
-    {
-    }
-
+    public const ERROR_INVALID_EMAIL = 'Invalid email';
+    public const ERROR_DOMAIN_NOT_RESOLVABLE = 'The domain name for this email address is not resolvable.';
+    private bool $checkDomain = false;
+    private array $mostCommonDomainNames = [
+        'aol.com',
+        'gmail.com',
+        'hotmail.com',
+        'icloud.com',
+        'live.com',
+        'mail.com',
+        'me.com',
+        'outlook.com',
+        'yahoo.com',
+    ];
 
     public function validate(mixed $value): bool
     {
+
+        if (empty($value)) {
+            return true;
+        }
+
         if (!is_string($value)) {
-            $this->addError(self::ERROR_INVALID_EMAIL);
+            $this->addError('ERROR_NOT_A_STRING', self::ERROR_NOT_A_STRING);
             return false;
         }
 
@@ -29,7 +41,7 @@ class Email extends AbstractAttribute implements ValidatorInterface
         }
 
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $this->addError(self::ERROR_INVALID_EMAIL);
+            $this->addError('ERROR_INVALID_EMAIL', self::ERROR_INVALID_EMAIL);
             return false;
         }
 
@@ -38,19 +50,45 @@ class Email extends AbstractAttribute implements ValidatorInterface
 
     private function validateDomain(string $email): bool
     {
-        $domain = substr(strrchr($email, "@"), 1);
+        $domainName = $this->extractDomain($email);
 
-        if ($domain === false || (!checkdnsrr($domain, "MX") && !checkdnsrr($domain, "A"))) {
-            $this->errors[] = 'Domain not resolvable';
+        if (empty($domainName)) {
+            $this->addError('ERROR_DOMAIN_NOT_RESOLVABLE', self::ERROR_DOMAIN_NOT_RESOLVABLE);
+            return false;
+        }
+
+        if ($this->isCommonDomain($domainName)) {
+            return true;
+        }
+
+        if (!$this->isResolvableDomain($domainName)) {
+            $this->addError('ERROR_DOMAIN_NOT_RESOLVABLE', self::ERROR_DOMAIN_NOT_RESOLVABLE);
             return false;
         }
 
         return true;
     }
 
-    private function addError(string $message): void
+    private function extractDomain(string $email): ?string
     {
-        $this->errors[] = $message;
+        $domain = substr(strrchr($email, "@"), 1);
+        return empty($domain) ? null : $domain;
+    }
+
+    private function isCommonDomain(string $domainName): bool
+    {
+        return in_array($domainName, $this->mostCommonDomainNames, true);
+    }
+
+    private function isResolvableDomain(string $domainName): bool
+    {
+        return checkdnsrr($domainName, "MX") || checkdnsrr($domainName, "A");
+    }
+
+    public function setCheckDomain(bool $checkDomain): Email
+    {
+        $this->checkDomain = $checkDomain;
+        return $this;
     }
 
 

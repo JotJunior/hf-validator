@@ -33,6 +33,7 @@
     "mockery/mockery": "^1.6"
   },
   "scripts": {
-    "test": "phpunit"
+    "test": "phpunit",
+    "coverage": "phpunit --testdox --coverage-html=coverage/ --coverage-filter=src/"
   }
 }

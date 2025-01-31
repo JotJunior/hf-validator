@@ -16,9 +16,9 @@ abstract class AbstractPhoneValidator
         return sprintf('/^\%s\d{%s}$/', $prefix, $lengthPattern);
     }
 
-    private function isValidAreaCode(string $areaCode): bool
+    protected function isValidAreaCode(string $areaCode): bool
     {
-        return in_array($areaCode, $this->validAreaCodes, true);
+        return in_array($areaCode, $this->validAreaCodes);
     }
 
 }

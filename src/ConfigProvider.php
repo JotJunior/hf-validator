@@ -18,7 +18,9 @@ class ConfigProvider
             ],
             'dependencies' => [],
             'commands' => [],
-            'listeners' => [],
+            'listeners' => [
+                BootValidatorsListener::class
+            ],
             'publish' => [],
         ];
     }

@@ -2,13 +2,15 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
+
 class Lte extends Gt implements ValidatorInterface
 {
+
+    public const ERROR_MESSAGE = 'The value must be less than or equal to %s';
+
+    private float|\DateTimeInterface $value;
 
     /**
      * Validates the provided value based on type and a minimum threshold.
@@ -18,9 +20,42 @@ class Lte extends Gt implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
+        if (empty($value)) {
+            return true;
+        }
 
-        return $this->validateTypes($value) && $value <= $this->value;
+        if (!$this->isValidType($value)) {
+            return false;
+        }
 
+        if ($value > $this->value) {
+            $this->addError('ERROR_MESSAGE', self::ERROR_MESSAGE, [$this->value]);
+            return false;
+        }
+
+        return true;
     }
+
+    protected function isValidType(mixed $value): bool
+    {
+        if ($this->value instanceof \DateTimeInterface && is_numeric($value)) {
+            $this->addError('ERROR_MUST_BE_DATETIME', self::ERROR_MUST_BE_DATETIME, [$this->value]);
+            return false;
+        }
+
+        if (is_numeric($this->value) && $value instanceof \DateTimeInterface) {
+            $this->addError('ERROR_MUST_BE_NUMERIC', self::ERROR_MUST_BE_NUMERIC, [$this->value]);
+            return false;
+        }
+
+        return true;
+    }
+
+    public function setValue(float|\DateTimeInterface $value): Lte
+    {
+        $this->value = $value;
+        return $this;
+    }
+
 
 }

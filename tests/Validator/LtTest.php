@@ -2,52 +2,70 @@
 
 namespace Jot\HfValidatorTest\Validator;
 
+use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\Validator\Lt;
 use PHPUnit\Framework\TestCase;
 
-class LtTest extends TestCase
+final class LtTest extends TestCase
 {
-    public function testValidateWithNumericValue(): void
+    private Lt $validator;
+    private \DateTimeInterface $now;
+    private float $numericValue;
+
+    protected function setUp(): void
     {
-        $mockObj = new Lt(20);
-
-        $resultMinus = $mockObj->validate(10);
-        $this->assertTrue($resultMinus);
-
-        $resultEqual = $mockObj->validate(20);
-        $this->assertFalse($resultEqual);
-
-        $resultPlus = $mockObj->validate(21);
-        $this->assertFalse($resultPlus);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->validator = new Lt($queryBuilder);
     }
 
-    public function testValidateWithDatetimeValue(): void
+    public function testValidateEmptyValue(): void
     {
-        $demoDate = new \DateTime("2021-01-02");
-        $mockObj = new Lt($demoDate);
-
-        $demoDateEqual = new \DateTime("2021-01-02");
-        $result = $mockObj->validate($demoDateEqual);
-        $this->assertFalse($result);
-
-        $demoDatePlus = new \DateTime("2021-01-01");
-        $result = $mockObj->validate($demoDatePlus);
-        $this->assertTrue($result);
-
-        $demoDateMinus = new \DateTime("2022-01-01");
-        $resultFalse = $mockObj->validate($demoDateMinus);
-        $this->assertFalse($resultFalse);
+        $this->validator->setValue(new \DateTime('now')); // value is yesterday
+        $isValid = $this->validator->validate(''); // validate now
+        $this->assertTrue($isValid);
+        $this->assertEmpty($this->validator->consumeErrors());
     }
 
-    public function testValidateWithMixedValueTypes(): void
+    public function testValidateCorrectDateTimeTypeLowerValue(): void
     {
-        $demoDate = new \DateTime("2021-01-01");
-        $mockObj = new Lt($demoDate);
-        $resultFalse = $mockObj->validate(10);
-        $this->assertFalse($resultFalse);
+        $this->validator->setValue(new \DateTime('+2 days')); // value is yesterday
+        $isValid = $this->validator->validate(new \DateTime('now')); // validate now
+        $this->assertTrue($isValid);
+        $this->assertEmpty($this->validator->consumeErrors());
+    }
 
-        $mockObjNum = new Lt(10);
-        $resultFalseNum = $mockObjNum->validate($demoDate);
-        $this->assertFalse($resultFalseNum);
+    public function testValidateCorrectDateTimeTypeGreaterValue(): void
+    {
+        $this->validator->setValue(new \DateTime('-1 day')); // value is tomorrow
+        $isValid = $this->validator->validate(new \DateTime('now')); // validate now
+        $this->assertFalse($isValid);
+    }
+
+    public function testValidateIncorrectDateTimeType(): void
+    {
+        $this->validator->setValue(new \DateTime('now'));
+        $isValid = $this->validator->validate(10);
+        $this->assertFalse($isValid);
+    }
+
+    public function testValidateCorrectNumericTypeLowerValue(): void
+    {
+        $this->validator->setValue(11);
+        $isValid = $this->validator->validate(10);
+        $this->assertTrue($isValid);
+    }
+
+    public function testValidateCorrectNumericTypeGreaterValue(): void
+    {
+        $this->validator->setValue(9); // value is 43.0
+        $isValid = $this->validator->validate(10); // validate 42.0
+        $this->assertFalse($isValid);
+    }
+
+    public function testValidateIncorrectNumericType(): void
+    {
+        $this->validator->setValue(10);
+        $isValid = $this->validator->validate(new \DateTime('now'));
+        $this->assertFalse($isValid);
     }
 }

@@ -2,17 +2,16 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Ip extends AbstractAttribute implements ValidatorInterface
+
+class Ip extends AbstractValidator implements ValidatorInterface
 {
 
-    public function __construct(protected bool $ipv4 = true, protected bool $ipv6 = true)
-    {
-    }
+    public const ERROR_INVALID_IP_ADDRESS = 'Invalid IP address';
+    private bool $ipv4 = true;
+    private bool $ipv6 = true;
 
     /**
      * Validates the given value to check if it is an invalid IPv4 or IPv6 address.
@@ -22,15 +21,15 @@ class Ip extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
-        if ($this->isInvalidIpv4($value)) {
+        if (empty($value)) {
             return true;
         }
 
-        if ($this->isInvalidIpv6($value)) {
-            return true;
+        if (!$this->isInvalidIpv4($value) && !$this->isInvalidIpv6($value)) {
+            $this->addError('ERROR_INVALID_IP_ADDRESS', self::ERROR_INVALID_IP_ADDRESS);
+            return false;
         }
-
-        return false;
+        return true;
     }
 
     /**
@@ -41,11 +40,7 @@ class Ip extends AbstractAttribute implements ValidatorInterface
      */
     private function isInvalidIpv4(mixed $value): bool
     {
-        if ($this->ipv4 && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $this->errors[] = 'Invalid IPv4 address';
-            return true;
-        }
-        return false;
+        return $this->ipv4 && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
     }
 
     /**
@@ -56,11 +51,19 @@ class Ip extends AbstractAttribute implements ValidatorInterface
      */
     private function isInvalidIpv6(mixed $value): bool
     {
-        if ($this->ipv6 && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            $this->errors[] = 'Invalid IPv6 address';
-            return true;
-        }
-        return false;
+        return $this->ipv6 && filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+    }
+
+    public function setIpv4(bool $ipv4): Ip
+    {
+        $this->ipv4 = $ipv4;
+        return $this;
+    }
+
+    public function setIpv6(bool $ipv6): Ip
+    {
+        $this->ipv6 = $ipv6;
+        return $this;
     }
 
 

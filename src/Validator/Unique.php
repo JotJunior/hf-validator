@@ -5,24 +5,16 @@ namespace Jot\HfValidator\Validator;
 use Attribute;
 use Hyperf\Contract\ContainerInterface;
 use Jot\HfElastic\QueryBuilder;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Unique extends AbstractAttribute implements ValidatorInterface
+
+class Unique extends AbstractValidator implements ValidatorInterface
 {
-    protected const ERROR_MESSAGE = 'The given value for %s is already in use.';
-
-    protected ?QueryBuilder $queryBuilder;
-
-    public function __construct(protected string $index, protected string $field)
-    {
-    }
-
-    public function setContainer(?ContainerInterface $container): void
-    {
-        $this->queryBuilder = $container->get(QueryBuilder::class);
-    }
+    protected const ERROR_VALUE_ALREADY_USED = 'The given value for %s is already in use.';
+    protected const ERROR_INVALID_ENTITY_OBJECT = 'The given value is not a valid Entity object.';
+    private string $index;
+    private string $field;
 
     /**
      * Validates the given value by checking its resolved ID and ensuring its uniqueness.
@@ -32,6 +24,9 @@ class Unique extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
+        if (empty($value)) {
+            return true;
+        }
         $value = $this->resolveValueId($value);
 
         if (!$value) {
@@ -39,7 +34,7 @@ class Unique extends AbstractAttribute implements ValidatorInterface
         }
 
         if (!$this->isValueUnique($value)) {
-            $this->addErrorMessage(sprintf(self::ERROR_MESSAGE, $this->field));
+            $this->addError('ERROR_VALUE_ALREADY_USED', self::ERROR_VALUE_ALREADY_USED, [$this->field]);
             return false;
         }
 
@@ -54,30 +49,10 @@ class Unique extends AbstractAttribute implements ValidatorInterface
      */
     private function isValueUnique(mixed $value): bool
     {
-        $query = $this->queryBuilder->from($this->index);
-
-        if (is_array($value)) {
-            foreach ($value as $fieldValue) {
-                $query->orWhere($this->field, '=', $fieldValue);
-            }
-        } else {
-            $query->where($this->field, '=', $value);
-        }
-
-        $valueCount = $query->count();
-
-        return $valueCount === 0;
-    }
-
-    /**
-     * Adds an error message to the list of errors.
-     *
-     * @param string $message The error message to be added.
-     * @return void
-     */
-    private function addErrorMessage(string $message): void
-    {
-        $this->errors[] = $message;
+        return $this->queryBuilder
+                ->from($this->index)
+                ->where($this->field, '=', $value)
+                ->count() === 0;
     }
 
     /**
@@ -90,11 +65,24 @@ class Unique extends AbstractAttribute implements ValidatorInterface
     private function resolveValueId(mixed $value): mixed
     {
         if (is_object($value) && !method_exists($value, 'getId')) {
-            $this->addErrorMessage('The given value is not a valid Entity object.');
+            $this->addError('ERROR_INVALID_ENTITY_OBJECT', self::ERROR_INVALID_ENTITY_OBJECT);
             return null;
         }
 
         return is_object($value) ? $value->getId() : $value;
     }
+
+    public function setIndex(string $index): Unique
+    {
+        $this->index = $index;
+        return $this;
+    }
+
+    public function setField(string $field): Unique
+    {
+        $this->field = $field;
+        return $this;
+    }
+
 
 }

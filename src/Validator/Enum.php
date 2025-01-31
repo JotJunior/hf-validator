@@ -2,17 +2,15 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Enum extends AbstractAttribute implements ValidatorInterface
+
+class Enum extends AbstractValidator implements ValidatorInterface
 {
 
-    public function __construct(protected array $values)
-    {
-    }
+    public const ERROR_VALUE_OUT_OF_PREDEFINED_LIST = 'The value must be one of the following: %s';
+    private array $values;
 
 
     /**
@@ -23,6 +21,23 @@ class Enum extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
-        return in_array($value, $this->values);
+        if (empty($value)) {
+            return true;
+        }
+
+        if (!in_array($value, $this->values)) {
+            $this->addError('ERROR_VALUE_OUT_OF_PREDEFINED_LIST', self::ERROR_VALUE_OUT_OF_PREDEFINED_LIST, [implode(', ', $this->values)]);
+            return false;
+        }
+
+        return true;
     }
+
+    public function setValues(array $values): Enum
+    {
+        $this->values = $values;
+        return $this;
+    }
+
+
 }

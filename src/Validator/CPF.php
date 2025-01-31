@@ -2,32 +2,47 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class CPF extends AbstractAttribute implements ValidatorInterface
+
+class CPF extends AbstractValidator implements ValidatorInterface
 {
-    private const CPF_LENGTH = 11;
+    private const CPF_MASK_PATTERN = '/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/';
+    public const CPF_LENGTH = 11;
+    public const ERROR_INVALID_CPF = 'Invalid CPF.';
+    public const ERROR_MALFORMED_CPF = 'Malformed CPF number.';
+    public const ERROR_MASK_MISMATCH = 'The provided value does not match the CNPJ mask.';
+    public const ERROR_NOT_A_STRING = 'The provided value is not a string.';
+    private bool $validateMask = false;
 
     public function validate(mixed $value): bool
     {
+        if(empty($value)) {
+            return true;
+        }
+
+        if (!is_string($value)) {
+            $this->errors[] = self::ERROR_NOT_A_STRING;
+        }
+
+        if ($this->validateMask && !$this->isValidMask($value)) {
+            $this->addError('ERROR_MASK_MISMATCH', self::ERROR_MASK_MISMATCH);
+        }
+
         $sanitizedCpf = $this->sanitizeCpf($value);
 
         if (!$this->hasValidLength($sanitizedCpf) || $this->hasRepeatedDigits($sanitizedCpf)) {
-            $this->errors[] = 'Malformed CPF number.';
-            return false;
+            $this->addError('ERROR_MALFORMED_CPF', self::ERROR_MALFORMED_CPF);
         }
 
         for ($position = 9; $position < self::CPF_LENGTH; $position++) {
             if (!$this->validateCpfDigit($sanitizedCpf, $position)) {
-                $this->errors[] = 'Invalid CPF.';
-                return false;
+                $this->addError('ERROR_INVALID_CPF', self::ERROR_INVALID_CPF);
             }
         }
 
-        return true;
+        return count($this->errors) === 0;
     }
 
     private function sanitizeCpf(string $docNumber): string
@@ -57,6 +72,20 @@ class CPF extends AbstractAttribute implements ValidatorInterface
 
         return $docNumber[$position] == $digit;
     }
+
+    public function isValidMask(string $value): bool
+    {
+        $pattern = self::CPF_MASK_PATTERN;
+        return preg_match($pattern, $value) === 1;
+    }
+
+    public function setValidateMask(bool $validateMask): CPF
+    {
+        $this->validateMask = $validateMask;
+        return $this;
+    }
+
+
 
 
 }

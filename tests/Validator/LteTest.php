@@ -2,53 +2,66 @@
 
 namespace Jot\HfValidatorTest\Validator;
 
-use Jot\HfValidator\Validator\Lt;
+use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\Validator\Lte;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class LteTest
+ * Tests the Lte class in the HfValidator component.
+ */
 class LteTest extends TestCase
 {
-    public function testValidateWithNumericValue(): void
+    /** @var Lte $lte */
+    private Lte $lte;
+    private QueryBuilder $mockQueryBuilder;
+
+    protected function setUp(): void
     {
-        $mockObj = new Lte(20);
-
-        $resultMinus = $mockObj->validate(10);
-        $this->assertTrue($resultMinus);
-
-        $resultEqual = $mockObj->validate(20);
-        $this->assertTrue($resultEqual);
-
-        $resultPlus = $mockObj->validate(21);
-        $this->assertFalse($resultPlus);
+        $this->mockQueryBuilder = $this->createMock(QueryBuilder::class);
+        $this->lte = new Lte($this->mockQueryBuilder);
     }
 
-    public function testValidateWithDatetimeValue(): void
+    public function testValidateGreaterThan(): void
     {
-        $demoDate = new \DateTime("2021-01-02");
-        $mockObj = new Lte($demoDate);
-
-        $demoDateEqual = new \DateTime("2021-01-02");
-        $result = $mockObj->validate($demoDateEqual);
-        $this->assertTrue($result);
-
-        $demoDatePlus = new \DateTime("2021-01-05");
-        $result = $mockObj->validate($demoDatePlus);
-        $this->assertFalse($result);
-
-        $demoDateMinus = new \DateTime("2021-01-01");
-        $resultFalse = $mockObj->validate($demoDateMinus);
-        $this->assertTrue($resultFalse);
+        $this->lte->setValue(100);
+        $this->assertFalse($this->lte->validate(101));
+        $this->assertNotEmpty($this->lte->consumeErrors());
     }
 
-    public function testValidateWithMixedValueTypes(): void
+    public function testValidateEqualTo(): void
     {
-        $demoDate = new \DateTime("2021-01-01");
-        $mockObj = new Lte($demoDate);
-        $resultFalse = $mockObj->validate(10);
-        $this->assertFalse($resultFalse);
-
-        $mockObjNum = new Lte(10);
-        $resultFalseNum = $mockObjNum->validate($demoDate);
-        $this->assertFalse($resultFalseNum);
+        $this->lte->setValue(100);
+        $this->assertTrue($this->lte->validate(100));
+        $this->assertEmpty($this->lte->consumeErrors());
     }
+
+    public function testValidateLowerThan(): void
+    {
+        $this->lte->setValue(100);
+        $this->assertTrue($this->lte->validate(99));
+        $this->assertEmpty($this->lte->consumeErrors());
+    }
+
+    public function testValidateMismatchNumericDateTime(): void
+    {
+        $this->lte->setValue(100);
+        $this->assertFalse($this->lte->validate(new \DateTime('now')));
+        $this->assertNotEmpty($this->lte->consumeErrors());
+    }
+
+    public function testValidateMismatchDateTimeNumeric(): void
+    {
+        $this->lte->setValue(new \DateTime('now'));
+        $this->assertFalse($this->lte->validate(100));
+        $this->assertNotEmpty($this->lte->consumeErrors());
+    }
+
+    public function testValidateEmpty(): void
+    {
+        $this->lte->setValue(100);
+        $this->assertTrue($this->lte->validate(''));
+        $this->assertEmpty($this->lte->consumeErrors());
+    }
+
 }

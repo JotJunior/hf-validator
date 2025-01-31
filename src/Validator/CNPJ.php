@@ -2,16 +2,20 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class CNPJ extends AbstractAttribute implements ValidatorInterface
+
+class CNPJ extends AbstractValidator implements ValidatorInterface
 {
 
+    private const CNPJ_MASK_PATTERN = '/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/';
     private const WEIGHTS_FIRST = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
     private const WEIGHTS_SECOND = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    public const CNPJ_LENGTH = 14;
+    public const ERROR_INVALID_CNPJ = 'Invalid CNPJ.';
+    public const ERROR_MASK_MISMATCH = 'The provided value does not match the CNPJ mask.';
+    private bool $validateMask = false;
 
 
     /**
@@ -22,10 +26,24 @@ class CNPJ extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
+        if (empty($value)) {
+            return true;
+        }
+
+        if (!is_string($value)) {
+            $this->errors[] = self::ERROR_NOT_A_STRING;
+            return false;
+        }
+
+        if ($this->validateMask && !$this->isValidMask($value)) {
+            $this->addError('ERROR_MASK_MISMATCH', self::ERROR_MASK_MISMATCH);
+            return false;
+        }
+
         $sanitizedCNPJ = $this->sanitizeCNPJ($value);
 
         if (!$this->isValidFormat($sanitizedCNPJ)) {
-            $this->errors[] = 'Invalid CNPJ format.';
+            $this->addError('ERROR_INVALID_CNPJ', self::ERROR_INVALID_CNPJ);
             return false;
         }
 
@@ -35,10 +53,23 @@ class CNPJ extends AbstractAttribute implements ValidatorInterface
         $isValid = $sanitizedCNPJ[12] == $firstVerifierDigit && $sanitizedCNPJ[13] == $secondVerifierDigit;
 
         if (!$isValid) {
-            $this->errors[] = 'Invalid CNPJ.';
+            $this->addError('ERROR_INVALID_CNPJ', self::ERROR_INVALID_CNPJ);
         }
 
         return $isValid;
+    }
+
+
+    /**
+     * Checks if the given CNPJ string follows the correct mask format (99.999.999/9999-99).
+     *
+     * @param string $value The CNPJ value to check.
+     * @return bool Returns true if the CNPJ follows the correct mask format; otherwise, false.
+     */
+    public function isValidMask(string $value): bool
+    {
+        $pattern = self::CNPJ_MASK_PATTERN;
+        return preg_match($pattern, $value) === 1;
     }
 
     /**
@@ -60,7 +91,7 @@ class CNPJ extends AbstractAttribute implements ValidatorInterface
      */
     private function isValidFormat(string $docNumber): bool
     {
-        return strlen($docNumber) === 14 && !preg_match('/(\d)\1{13}/', $docNumber);
+        return strlen($docNumber) === self::CNPJ_LENGTH && !preg_match('/(\d)\1{13}/', $docNumber);
     }
 
     /**
@@ -79,5 +110,13 @@ class CNPJ extends AbstractAttribute implements ValidatorInterface
         $remainder = $sum % 11;
         return $remainder < 2 ? 0 : 11 - $remainder;
     }
+
+    public function setValidateMask(bool $validateMask): CNPJ
+    {
+        $this->validateMask = $validateMask;
+        return $this;
+    }
+
+
 }
 

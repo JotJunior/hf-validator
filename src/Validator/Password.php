@@ -2,73 +2,46 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Password extends AbstractAttribute implements ValidatorInterface
+
+class Password extends AbstractValidator implements ValidatorInterface
 {
 
-    protected array $patterns = [];
+    public const ERROR_INVALID_PASSWORD = 'Your password must have at least %s and be between %s and %s characters long.';
+    public const ERROR_MATCH_LOWER = 'one lower case letter';
+    public const ERROR_MATCH_UPPER = 'one upper case letter';
+    public const ERROR_MATCH_NUMBER = 'one number';
+    public const ERROR_MATCH_SPECIAL = 'one special character';
+    public const ERROR_LENGTH = 'between %s and %s characters long';
+    private bool $requireLower = true;
+    private bool $requireUpper = true;
+    private bool $requireNumber = true;
+    private bool $requireSpecial = true;
+    private string $special = '!@#$%&*_';
+    private int $minLength = 8;
+    private int $maxLength = 20;
 
-    public function __construct(
-        protected bool  $requireLower = true,
-        protected bool  $requireUpper = true,
-        protected bool  $requireNumber = true,
-        protected bool  $requireSpecial = true,
-        protected int   $minLength = 8,
-        protected array $special = ['!', '@', '#', '$', '%', '&', '*', '(', ')'],
-    )
-    {
-        if ($this->requireLower) {
-            $this->patterns['lower'] = '(?=.*[a-z])';
-        }
-        if ($this->requireUpper) {
-            $this->patterns['upper'] = '(?=.*[A-Z])';
-        }
-        if ($this->requireNumber) {
-            $this->patterns['number'] = '(?=.*\d)';
-        }
-        if ($this->requireSpecial) {
-            $this->patterns['special'] = sprintf('(?=.*[%s])', implode('', $special));
-        }
-        $this->patterns['minLength'] = sprintf('.{%d,}', $minLength);
-
-    }
 
     public function validate($value): bool
     {
-        if ($this->isEmptyPassword($value)) {
-            return false;
+        if (empty($value)) {
+            return true;
         }
 
-        $pattern = sprintf('/^%s$/', implode('', $this->patterns));
-        $isValid = preg_match($pattern, $value) > 0;
+        $isValid = preg_match($this->createPattern(), $value) > 0;
         if (!$isValid) {
-            $this->errors[] = $this->getValidationMessage();
+            $this->addValidationMessage();
         }
         return $isValid;
     }
 
-    protected function isEmptyPassword(mixed $value): bool
+    protected function addValidationMessage(): void
     {
-        $this->errors[] = 'Password is required.';
-        return empty($value);
-    }
 
-    protected function getValidationMessage(): string
-    {
         $conditions = $this->getIndividualConditions();
-        $message = 'Your password must have at least ';
-        if (count($conditions) > 1) {
-            $message .= implode(', ', $conditions);
-            $message .= ' and be at least ' . $this->minLength . ' characters long.';
-        } else {
-            $message .= $this->minLength . ' characters long.';
-        }
-
-        return $message;
+        $this->addError('ERROR_INVALID_PASSWORD', self::ERROR_INVALID_PASSWORD, $conditions);
     }
 
     private function getIndividualConditions(): array
@@ -76,19 +49,83 @@ class Password extends AbstractAttribute implements ValidatorInterface
         $conditions = [];
 
         if ($this->requireLower) {
-            $conditions[] = 'one lower case letter';
+            $conditions[] = $this->customErrorMessages['ERROR_MATCH_LOWER'] ?? self::ERROR_MATCH_LOWER;
         }
         if ($this->requireUpper) {
-            $conditions[] = 'one upper case letter';
+            $conditions[] = $this->customErrorMessages['ERROR_MATCH_UPPER'] ?? self::ERROR_MATCH_UPPER;
         }
         if ($this->requireNumber) {
-            $conditions[] = 'one number';
+            $conditions[] = $this->customErrorMessages['ERROR_MATCH_NUMBER'] ?? self::ERROR_MATCH_NUMBER;
         }
         if ($this->requireSpecial) {
-            $conditions[] = 'one special character';
+            $conditions[] = $this->customErrorMessages['ERROR_MATCH_SPECIAL'] ?? self::ERROR_MATCH_SPECIAL;
         }
+        $conditions[] = sprintf($this->customErrorMessages['ERROR_LENGTH'] ?? self::ERROR_LENGTH, $this->minLength, $this->maxLength);
 
         return $conditions;
     }
+
+    protected function createPattern(): string
+    {
+        $pattern = [''];
+        if ($this->requireLower) {
+            $pattern['lower'] = '(?=.*[a-z])';
+        }
+        if ($this->requireUpper) {
+            $pattern['upper'] = '(?=.*[A-Z])';
+        }
+        if ($this->requireNumber) {
+            $pattern['number'] = '(?=.*\d)';
+        }
+        if ($this->requireSpecial) {
+            $pattern['special'] = sprintf('(?=.*[%s])', $this->special);
+        }
+        $pattern['minLength'] = sprintf('.{%d,%d}', $this->minLength, $this->maxLength);
+
+        return sprintf('/^%s$/', implode('', $pattern));
+    }
+
+    public function setRequireLower(bool $requireLower): Password
+    {
+        $this->requireLower = $requireLower;
+        return $this;
+    }
+
+    public function setRequireUpper(bool $requireUpper): Password
+    {
+        $this->requireUpper = $requireUpper;
+        return $this;
+    }
+
+    public function setRequireNumber(bool $requireNumber): Password
+    {
+        $this->requireNumber = $requireNumber;
+        return $this;
+    }
+
+    public function setRequireSpecial(bool $requireSpecial): Password
+    {
+        $this->requireSpecial = $requireSpecial;
+        return $this;
+    }
+
+    public function setSpecial(string $special): Password
+    {
+        $this->special = $special;
+        return $this;
+    }
+
+    public function setMinLength(int $minLength): Password
+    {
+        $this->minLength = $minLength;
+        return $this;
+    }
+
+    public function setMaxLength(int $maxLength): Password
+    {
+        $this->maxLength = $maxLength;
+        return $this;
+    }
+
 
 }

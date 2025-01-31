@@ -2,35 +2,65 @@
 
 namespace Jot\HfValidatorTest\Validator;
 
+use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\Validator\CPF;
-use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-#[CoversNothing]
 class CPFTest extends TestCase
 {
+    private CPF $cpfValidator;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->cpfValidator = new CPF($queryBuilder);
     }
 
     public function testValidCPF(): void
     {
-        $this->assertTrue((new CPF())->validate(value: '52998224725'));
+        $this->assertTrue($this->cpfValidator->validate('57804827059'));
+        $this->assertTrue($this->cpfValidator->validate('578.048.270-59'));
+        $this->assertEmpty($this->cpfValidator->consumeErrors());
+    }
+
+    public function testEmptyCPF(): void
+    {
+        $this->assertTrue($this->cpfValidator->validate(''));
+        $this->assertEmpty($this->cpfValidator->consumeErrors());
     }
 
     public function testInvalidCPF(): void
     {
-        $this->assertFalse((new CPF())->validate(value: '12345678901'));
+        $this->assertFalse($this->cpfValidator->validate('123.456.789-00'));
+        $this->assertFalse($this->cpfValidator->validate('12345678900'));
+        $this->assertContains(CPF::ERROR_INVALID_CPF, $this->cpfValidator->consumeErrors());
     }
 
-    public function testMalformedCPF(): void
+    public function testNonStringCPF(): void
     {
-        $this->assertFalse((new CPF())->validate(value: 'A123B567C901'));
+        $this->assertFalse($this->cpfValidator->validate(12345678901));
+        $this->assertContains(CPF::ERROR_NOT_A_STRING, $this->cpfValidator->consumeErrors());
     }
 
     public function testRepeatedDigitsCPF(): void
     {
-        $this->assertFalse((new CPF())->validate(value: '11111111111'));
+        $this->assertFalse($this->cpfValidator->validate('11111111111'));
+        $this->assertContains(CPF::ERROR_MALFORMED_CPF, $this->cpfValidator->consumeErrors());
+    }
+
+    public function testValidMaskCPF(): void
+    {
+        $this->cpfValidator->setValidateMask(true);
+
+        $this->assertTrue($this->cpfValidator->validate('578.048.270-59'));
+        $this->assertEmpty($this->cpfValidator->consumeErrors());
+    }
+
+    public function testInvalidMaskCPF(): void
+    {
+        $this->cpfValidator->setValidateMask(true);
+
+        $this->assertFalse($this->cpfValidator->validate('578048270-59'));
+        $this->assertContains(CPF::ERROR_MASK_MISMATCH, $this->cpfValidator->consumeErrors());
     }
 }

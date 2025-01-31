@@ -2,18 +2,18 @@
 
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Url extends AbstractAttribute implements ValidatorInterface
+
+class Url extends AbstractValidator implements ValidatorInterface
 {
 
-    public function __construct(protected bool $forceHttps = false, protected bool $checkDomain = false)
-    {
-    }
-
+    public const ERROR_INVALID_URL = 'Invalid URL';
+    public const ERROR_URL_MUST_USE_HTTPS_SCHEME = 'URL must use https scheme';
+    public const ERROR_DOMAIN_NOT_RESOLVABLE = 'Domain not resolvable';
+    private bool $forceHttps = false;
+    private bool $checkDomain = false;
 
     /**
      * Validates whether the given value is a valid URL.
@@ -25,7 +25,7 @@ class Url extends AbstractAttribute implements ValidatorInterface
     {
         $isValid = filter_var($value, FILTER_VALIDATE_URL) !== false;
         if (!$isValid) {
-            $this->errors[] = 'Invalid URL';
+            $this->addError('ERROR_INVALID_URL', self::ERROR_INVALID_URL);
         }
         return $isValid;
     }
@@ -40,7 +40,7 @@ class Url extends AbstractAttribute implements ValidatorInterface
     {
         $isValid = parse_url($url, PHP_URL_SCHEME) === 'https';
         if (!$isValid) {
-            $this->errors[] = 'URL must use https scheme';
+            $this->addError('ERROR_URL_MUST_USE_HTTPS_SCHEME', self::ERROR_URL_MUST_USE_HTTPS_SCHEME);
         }
         return $isValid;
     }
@@ -56,7 +56,7 @@ class Url extends AbstractAttribute implements ValidatorInterface
         $domain = parse_url($url, PHP_URL_HOST);
         $isValid = $domain !== null && (checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA'));
         if (!$isValid) {
-            $this->errors[] = 'Domain not resolvable';
+            $this->addError('ERROR_DOMAIN_NOT_RESOLVABLE', self::ERROR_DOMAIN_NOT_RESOLVABLE);
         }
         return $isValid;
     }
@@ -69,6 +69,10 @@ class Url extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
+        if (empty($value)) {
+            return true;
+        }
+
         if (!$this->isValidUrl($value)) {
             return false;
         }
@@ -82,6 +86,18 @@ class Url extends AbstractAttribute implements ValidatorInterface
         }
 
         return true;
+    }
+
+    public function setForceHttps(bool $forceHttps): Url
+    {
+        $this->forceHttps = $forceHttps;
+        return $this;
+    }
+
+    public function setCheckDomain(bool $checkDomain): Url
+    {
+        $this->checkDomain = $checkDomain;
+        return $this;
     }
 
 

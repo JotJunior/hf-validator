@@ -3,17 +3,16 @@
 namespace Jot\HfValidator\Validator;
 
 use Attribute;
-use Jot\HfValidator\AbstractAttribute;
+use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-class Required extends AbstractAttribute implements ValidatorInterface
-{
-    private const ERROR_MESSAGE = 'This field is required.';
 
-    public function __construct(protected readonly bool $skipUpdates = true)
-    {
-    }
+class Required extends AbstractValidator implements ValidatorInterface
+{
+    private const ERROR_FIELD_IS_REQUIRED = 'This field is required.';
+    private bool $onCreate = true;
+    private bool $onUpdate = true;
+    protected string $context = 'onCreate';
 
     /**
      * Validates the provided value based on specific conditions.
@@ -23,15 +22,17 @@ class Required extends AbstractAttribute implements ValidatorInterface
      */
     public function validate(mixed $value): bool
     {
-        if ($this->skipUpdates) {
-            return true;
-        }
-        if ($this->isNull($value) || $this->isEmptyString($value) || $this->isInvalidObject($value)) {
-            $this->addError(self::ERROR_MESSAGE);
+        if ($this->shouldAddError($value)) {
+            $this->addError('ERROR_FIELD_IS_REQUIRED', self::ERROR_FIELD_IS_REQUIRED);
             return false;
         }
 
         return true;
+    }
+
+    private function shouldAddError(mixed $value): bool
+    {
+        return $this->{$this->context} && ($this->isNull($value) || $this->isEmptyString($value) || $this->isInvalidObject($value));
     }
 
     /**
@@ -64,28 +65,32 @@ class Required extends AbstractAttribute implements ValidatorInterface
      */
     private function isInvalidObject(mixed $value): bool
     {
-        return is_object($value) && method_exists($value, 'getid') && empty($value->getid());
+        return is_object($value) && method_exists($value, 'getId') && empty($value->getId());
     }
 
-    /**
-     * Adds an error message to the error list.
-     *
-     * @param string $message The error message to add.
-     * @return void
-     */
-    private function addError(string $message): void
+    public function setOnCreate(bool $onCreate): Required
     {
-        $this->errors[] = $message;
+        $this->onCreate = $onCreate;
+        return $this;
     }
 
-    /**
-     * Determines whether updates should be skipped.
-     *
-     * @return bool Returns true if updates are to be skipped, otherwise false.
-     */
-    public function skipUpdates(): bool
+    public function setOnUpdate(bool $onUpdate): Required
     {
-        return $this->skipUpdates;
+        $this->onUpdate = $onUpdate;
+        return $this;
+    }
+
+    public function onCreate(): self
+    {
+        $this->context = 'onCreate';
+        return $this;
+
+    }
+
+    public function onUpdate(): self
+    {
+        $this->context = 'onUpdate';
+        return $this;
     }
 
 
