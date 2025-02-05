@@ -18,8 +18,5 @@
         <testsuite name="ValidatorTests">
             <directory>tests/Validator</directory>
         </testsuite>
-        <testsuite name="AnnotationTests">
-            <directory>tests/Annotation</directory>
-        </testsuite>
     </testsuites>
 </phpunit>

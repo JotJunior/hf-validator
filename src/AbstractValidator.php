@@ -12,6 +12,9 @@ class AbstractValidator
     public const ERROR_NOT_A_STRING = 'The provided value is not a string.';
 
     protected array $customErrorMessages = [];
+    protected bool $onCreate = true;
+    protected bool $onUpdate = true;
+    protected string $context = 'onCreate';
 
     public function __construct(
         protected QueryBuilder $queryBuilder
@@ -62,5 +65,31 @@ class AbstractValidator
         $this->customErrorMessages = $customErrorMessages;
         return $this;
     }
+
+    public function setOnCreate(bool $onCreate): self
+    {
+        $this->onCreate = $onCreate;
+        return $this;
+    }
+
+    public function setOnUpdate(bool $onUpdate): self
+    {
+        $this->onUpdate = $onUpdate;
+        return $this;
+    }
+
+    public function onCreate(): self
+    {
+        $this->context = 'onCreate';
+        return $this;
+
+    }
+
+    public function onUpdate(): self
+    {
+        $this->context = 'onUpdate';
+        return $this;
+    }
+
 
 }

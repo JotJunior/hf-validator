@@ -10,9 +10,6 @@ use Jot\HfValidator\ValidatorInterface;
 class Required extends AbstractValidator implements ValidatorInterface
 {
     private const ERROR_FIELD_IS_REQUIRED = 'This field is required.';
-    private bool $onCreate = true;
-    private bool $onUpdate = true;
-    protected string $context = 'onCreate';
 
     /**
      * Validates the provided value based on specific conditions.
@@ -67,31 +64,5 @@ class Required extends AbstractValidator implements ValidatorInterface
     {
         return is_object($value) && method_exists($value, 'getId') && empty($value->getId());
     }
-
-    public function setOnCreate(bool $onCreate): Required
-    {
-        $this->onCreate = $onCreate;
-        return $this;
-    }
-
-    public function setOnUpdate(bool $onUpdate): Required
-    {
-        $this->onUpdate = $onUpdate;
-        return $this;
-    }
-
-    public function onCreate(): self
-    {
-        $this->context = 'onCreate';
-        return $this;
-
-    }
-
-    public function onUpdate(): self
-    {
-        $this->context = 'onUpdate';
-        return $this;
-    }
-
 
 }
