@@ -2,6 +2,7 @@
 
 namespace Jot\HfValidator\Validator;
 
+use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
@@ -47,10 +48,22 @@ class Exists extends AbstractValidator implements ValidatorInterface
 
     private function doesValueExist(mixed $value): bool
     {
-        return $this->queryBuilder
-                ->from($this->index)
-                ->where($this->field, '=', $value)
-                ->count() > 0;
+        $query = $this->queryBuilder->from($this->index);
+        $this->addConditionsToQuery($query, $value);
+
+        return $query->count() > 0;
+    }
+
+    private function addConditionsToQuery(QueryBuilder $query, mixed $value): void
+    {
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                $condition = is_array($item) && isset($item['id']) ? $item['id'] : $item;
+                $query->orWhere($this->field, '=', $condition);
+            }
+        } else {
+            $query->where($this->field, '=', $value);
+        }
     }
 
     public function setIndex(string $index): Exists
