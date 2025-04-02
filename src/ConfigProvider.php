@@ -21,7 +21,15 @@ class ConfigProvider
             'listeners' => [
                 BootValidatorsListener::class
             ],
-            'publish' => [],
+            'publish' => [
+                [
+                    'id' => 'translations',
+                    'description' => 'The translation files for hf-validator.',
+                    'source' => __DIR__ . '/../storage/languages',
+                    'destination' => BASE_PATH . '/storage/languages',
+                    'merge' => true, 
+                ],
+            ],
         ];
     }
 }

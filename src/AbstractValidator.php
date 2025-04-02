@@ -6,10 +6,10 @@ use Jot\HfElastic\Contracts\QueryBuilderInterface;
 
 class AbstractValidator
 {
-    public const ERROR_MUST_BE_DATETIME = 'The value must be a DateTime object.';
-    public const ERROR_MUST_BE_NUMERIC = 'The value must be a numeric value.';
-    public const ERROR_MUST_BE_STRING = 'The value must be a string value.';
-    public const ERROR_NOT_A_STRING = 'The provided value is not a string.';
+    public const ERROR_MUST_BE_DATETIME = 'ERROR_MUST_BE_DATETIME';
+    public const ERROR_MUST_BE_NUMERIC = 'ERROR_MUST_BE_NUMERIC';
+    public const ERROR_MUST_BE_STRING = 'ERROR_MUST_BE_STRING';
+    public const ERROR_NOT_A_STRING = 'ERROR_NOT_A_STRING';
 
     protected array $customErrorMessages = [];
     protected bool $onCreate = true;
@@ -73,10 +73,6 @@ class AbstractValidator
      * @param string|null $default The default error message to use if no message exists for the provided key.
      * @param array $replacements An associative array of replacements to format the error message.
      *
-     * $customMessage = 'the fox is %s';
-     * Example: $this->>addError($customMessage, self::DEFAULT_MESSAGE, ['red'])
-     * Will result in 'the fox is red'
-     *
      * @return void
      */
     protected function addError(string $key, ?string $default = null, array $replacements = []): void
@@ -87,8 +83,23 @@ class AbstractValidator
             default => $value,
         }, $replacements);
 
-        $this->errors[] = vsprintf($this->customErrorMessages[$key] ?? $default, $replacements);
+        // Check if custom error message exists for this key
+        if (isset($this->customErrorMessages[$key])) {
+            $message = vsprintf($this->customErrorMessages[$key], $replacements);
+        } else {
+            // Use global translation function with namespace
+            $translationKey = 'hf-validator.' . $key;
+            $message = __(
+                $translationKey, 
+                $replacements
+            );
+            
+            // Fallback to default message if translation is not available
+            if ($message === $translationKey && $default !== null) {
+                $message = vsprintf($default, $replacements);
+            }
+        }
+
+        $this->errors[] = $message;
     }
-
-
 }
