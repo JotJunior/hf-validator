@@ -39,6 +39,7 @@ coverage/
 # Configurações específicas do ambiente
 .env
 .env.*
+.windsurfrules
 
 # Backups ou arquivos locais
 *.bak
