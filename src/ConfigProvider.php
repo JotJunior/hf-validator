@@ -26,7 +26,7 @@ class ConfigProvider
                     'id' => 'translations-en',
                     'description' => 'The english translation files for hf-validator.',
                     'source' => __DIR__ . '/../storage/languages/en/hf-validator.php',
-                    'destination' => BASE_PATH . '/storage/languages/hf-validator/en.php',
+                    'destination' => BASE_PATH . '/storage/languages/en/hf-validator.php',
                 ],
                 [
                     'id' => 'translations-pt_BR',
