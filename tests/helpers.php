@@ -1,18 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * Mock for the Hyperf translation function
- * This function simulates the behavior of the global __() function in Hyperf
- * for testing purposes.
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
  *
- * @param string $key The translation key
- * @param array $replace Values to replace placeholders
- * @param string|null $locale The locale to use
- * @return string The translated string or the key if no translation is found
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
  */
-if (!function_exists('__')) {
+if (! function_exists('__')) {
     function __(string $key, array $replace = [], ?string $locale = null): string
     {
         // For testing, we'll just return the key or apply replacements to default messages

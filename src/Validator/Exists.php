@@ -1,18 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Validator;
 
 use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-
 class Exists extends AbstractValidator implements ValidatorInterface
 {
-
     public const ERROR_INVALID_ENTITY = 'The given value is not a valid Entity object.';
+
     public const ERROR_VALUE_DOES_NOT_EXIST = 'The given value does not exist in the specified index and field.';
+
     private string $index;
+
     private string $field;
 
     public function validate(mixed $value): bool
@@ -28,7 +38,7 @@ class Exists extends AbstractValidator implements ValidatorInterface
 
         $value = $this->extractEntityId($value);
 
-        if (!$this->doesValueExist($value)) {
+        if (! $this->doesValueExist($value)) {
             $this->addError('ERROR_VALUE_DOES_NOT_EXIST', self::ERROR_VALUE_DOES_NOT_EXIST);
             return false;
         }
@@ -36,9 +46,21 @@ class Exists extends AbstractValidator implements ValidatorInterface
         return true;
     }
 
+    public function setIndex(string $index): Exists
+    {
+        $this->index = $index;
+        return $this;
+    }
+
+    public function setField(string $field): Exists
+    {
+        $this->field = $field;
+        return $this;
+    }
+
     private function isEntityInvalid(mixed $value): bool
     {
-        return is_object($value) && !method_exists($value, 'getId');
+        return is_object($value) && ! method_exists($value, 'getId');
     }
 
     private function extractEntityId(mixed $value): mixed
@@ -65,19 +87,4 @@ class Exists extends AbstractValidator implements ValidatorInterface
             $query->where($this->field, '=', $value);
         }
     }
-
-    public function setIndex(string $index): Exists
-    {
-        $this->index = $index;
-        return $this;
-    }
-
-    public function setField(string $field): Exists
-    {
-        $this->field = $field;
-        return $this;
-    }
-
-
 }
-

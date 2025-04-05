@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
 return [
     // AbstractValidator messages
     'ERROR_MUST_BE_DATETIME' => 'The value must be a DateTime object.',

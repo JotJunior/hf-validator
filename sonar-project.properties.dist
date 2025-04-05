@@ -1,0 +1,5 @@
+sonar.projectKey=hf-validator
+sonar.sources=./src/
+sonar.host.url=http://localhost:9100
+sonar.php.coverage.reportPaths=coverage.xml
+sonar.token=

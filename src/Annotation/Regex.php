@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Annotation;
 
 use Attribute;
@@ -21,15 +30,12 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Regex extends AbstractAnnotation
 {
-
     public function __construct(
         public string $pattern,
-        public array  $customErrorMessages = [
+        public array $customErrorMessages = [
             'ERROR_INVALID_PATTERN' => null,
-            'ERROR_VALUE_DOES_NOT_MATCH' => null
+            'ERROR_VALUE_DOES_NOT_MATCH' => null,
         ]
-    )
-    {
+    ) {
     }
-
 }

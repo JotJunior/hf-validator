@@ -1,23 +1,32 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Validator;
 
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-
 class Regex extends AbstractValidator implements ValidatorInterface
 {
-
     public const ERROR_INVALID_REGEX = 'Invalid regex pattern.';
+
     public const ERROR_INVALID_VALUE = 'Invalid value. Check if your string matches the following pattern:';
+
     private string $pattern;
 
     /**
      * Validates the given value against a predefined pattern.
      *
-     * @param mixed $value The value to be validated.
-     * @return bool Returns true if the value matches the pattern, otherwise false.
+     * @param mixed $value the value to be validated
+     * @return bool returns true if the value matches the pattern, otherwise false
      */
     public function validate(mixed $value): bool
     {
@@ -31,7 +40,7 @@ class Regex extends AbstractValidator implements ValidatorInterface
 
         $isValid = preg_match($this->pattern, $value) > 0;
 
-        if (!$isValid) {
+        if (! $isValid) {
             $this->addError('ERROR_INVALID_VALUE', self::ERROR_INVALID_VALUE, [$this->pattern]);
         }
 
@@ -43,6 +52,4 @@ class Regex extends AbstractValidator implements ValidatorInterface
         $this->pattern = $pattern;
         return $this;
     }
-
-
 }

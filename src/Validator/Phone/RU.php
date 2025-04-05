@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Validator\Phone;
 
 class RU extends AbstractPhoneValidator implements CountryPhoneInterface
@@ -16,5 +25,4 @@ class RU extends AbstractPhoneValidator implements CountryPhoneInterface
         $regexPattern = $this->buildPattern($this->pattern);
         return preg_match($regexPattern, $phone) === 1;
     }
-
 }

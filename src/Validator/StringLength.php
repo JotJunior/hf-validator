@@ -1,26 +1,35 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
-
 class StringLength extends AbstractValidator implements ValidatorInterface
 {
-
     public const ERROR_MIN_LENGTH = 'Value must be at least %s characters long';
+
     public const ERROR_MAX_LENGTH = 'Value must be at most %s characters long';
+
     private ?int $min = null;
+
     private ?int $max = null;
 
     /**
      * Validates the given value by ensuring it meets the string length required criteria.
      *
-     * @param mixed $value The value to be validated.
+     * @param mixed $value the value to be validated
      *
-     * @return bool Returns true if the validation passes, otherwise false.
+     * @return bool returns true if the validation passes, otherwise false
      */
     public function validate(mixed $value): bool
     {
@@ -28,26 +37,38 @@ class StringLength extends AbstractValidator implements ValidatorInterface
             return true;
         }
 
-        if (!$this->isStringType($value)) {
+        if (! $this->isStringType($value)) {
             return false;
         }
 
         $valueLength = $this->calculateLength($value);
 
-        if (!$this->validateMinLength($valueLength)) {
+        if (! $this->validateMinLength($valueLength)) {
             return false;
         }
 
-        if (!$this->validateMaxLength($valueLength)) {
+        if (! $this->validateMaxLength($valueLength)) {
             return false;
         }
 
         return true;
     }
 
+    public function setMin(int $min): StringLength
+    {
+        $this->min = $min;
+        return $this;
+    }
+
+    public function setMax(int $max): StringLength
+    {
+        $this->max = $max;
+        return $this;
+    }
+
     private function isStringType(mixed $value): bool
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             $this->addError('ERROR_MUST_BE_STRING', self::ERROR_MUST_BE_STRING);
             return false;
         }
@@ -76,18 +97,4 @@ class StringLength extends AbstractValidator implements ValidatorInterface
         }
         return true;
     }
-
-    public function setMin(int $min): StringLength
-    {
-        $this->min = $min;
-        return $this;
-    }
-
-    public function setMax(int $max): StringLength
-    {
-        $this->max = $max;
-        return $this;
-    }
-
-
 }

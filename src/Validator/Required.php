@@ -1,11 +1,18 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Validator;
 
-use Attribute;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
-
 
 class Required extends AbstractValidator implements ValidatorInterface
 {
@@ -14,8 +21,8 @@ class Required extends AbstractValidator implements ValidatorInterface
     /**
      * Validates the provided value based on specific conditions.
      *
-     * @param mixed $value The value to be validated.
-     * @return bool Returns true if the value is valid, false otherwise.
+     * @param mixed $value the value to be validated
+     * @return bool returns true if the value is valid, false otherwise
      */
     public function validate(mixed $value): bool
     {
@@ -35,8 +42,8 @@ class Required extends AbstractValidator implements ValidatorInterface
     /**
      * Checks if the given value is null.
      *
-     * @param mixed $value The value to be checked.
-     * @return bool Returns true if the value is null, false otherwise.
+     * @param mixed $value the value to be checked
+     * @return bool returns true if the value is null, false otherwise
      */
     private function isNull(mixed $value): bool
     {
@@ -46,8 +53,8 @@ class Required extends AbstractValidator implements ValidatorInterface
     /**
      * Checks if the given value is an empty string.
      *
-     * @param mixed $value The value to be checked.
-     * @return bool Returns true if the value is a string and is empty after trimming, false otherwise.
+     * @param mixed $value the value to be checked
+     * @return bool returns true if the value is a string and is empty after trimming, false otherwise
      */
     private function isEmptyString(mixed $value): bool
     {
@@ -57,12 +64,11 @@ class Required extends AbstractValidator implements ValidatorInterface
     /**
      * Checks if the provided value is an invalid object based on specific criteria.
      *
-     * @param mixed $value The value to be checked.
+     * @param mixed $value the value to be checked
      * @return bool Returns true if the value is an object that has a `getid` method and its `getid` result is empty. Returns false otherwise.
      */
     private function isInvalidObject(mixed $value): bool
     {
         return is_object($value) && method_exists($value, 'getId') && empty($value->getId());
     }
-
 }

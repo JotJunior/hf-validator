@@ -1,8 +1,18 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Annotation;
 
 use Attribute;
+use DateTimeInterface;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
@@ -13,27 +23,24 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * be dates or numeric values. Custom error messages can also be defined for
  * scenarios where the value is not within the specified range.
  *
- * @property \DateTimeInterface|float $min The minimum value allowed for the range.
- * @property \DateTimeInterface|float $max The maximum value allowed for the range.
+ * @property DateTimeInterface|float $min The minimum value allowed for the range.
+ * @property DateTimeInterface|float $max The maximum value allowed for the range.
  * @property array $customErrorMessages An associative array of custom error messages where:
- *                                       - 'ERROR_MESSAGE' specifies the general error message.
- *                                       - 'ERROR_MUST_BE_DATETIME' specifies the error message if the expected value is a datetime.
- *                                       - 'ERROR_MUST_BE_NUMERIC' specifies the error message if the expected value is numeric.
+ *                                      - 'ERROR_MESSAGE' specifies the general error message.
+ *                                      - 'ERROR_MUST_BE_DATETIME' specifies the error message if the expected value is a datetime.
+ *                                      - 'ERROR_MUST_BE_NUMERIC' specifies the error message if the expected value is numeric.
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Range extends AbstractAnnotation
 {
-
     public function __construct(
-        public \DateTimeInterface|float $min,
-        public \DateTimeInterface|float $max,
-        public array                    $customErrorMessages = [
+        public DateTimeInterface|float $min,
+        public DateTimeInterface|float $max,
+        public array $customErrorMessages = [
             'ERROR_OUT_OF_RANGE' => null,
             'ERROR_MUST_BE_DATETIME' => null,
             'ERROR_MUST_BE_NUMERIC' => null,
         ]
-    )
-    {
+    ) {
     }
-
 }

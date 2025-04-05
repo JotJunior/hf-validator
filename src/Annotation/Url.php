@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidator\Annotation;
 
 use Attribute;
@@ -19,18 +28,14 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Url extends AbstractAnnotation
 {
-
     public function __construct(
-        public bool  $forceHttps = false,
-        public bool  $checkDomain = false,
+        public bool $forceHttps = false,
+        public bool $checkDomain = false,
         public array $customErrorMessages = [
             'ERROR_INVALID_URL' => null,
             'ERROR_URL_MUST_USE_HTTPS_SCHEME' => null,
             'ERROR_DOMAIN_NOT_RESOLVABLE' => null,
         ]
-    )
-    {
+    ) {
     }
-
 }
-

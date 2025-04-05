@@ -1,67 +1,200 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
+
 namespace Jot\HfValidatorTest\Validator;
 
+use DateTime;
 use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\Validator\Lte;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class LteTest
- * Tests the Lte class in the HfValidator component.
+ * @internal
  */
+#[CoversClass(Lte::class)]
 class LteTest extends TestCase
 {
-    /** @var Lte $lte */
     private Lte $lte;
+
     private QueryBuilder $mockQueryBuilder;
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->mockQueryBuilder = $this->createMock(QueryBuilder::class);
         $this->lte = new Lte($this->mockQueryBuilder);
     }
 
+    /**
+     * What is being tested:
+     * - Lte validator with value greater than comparison value
+     * Conditions/Scenarios:
+     * - Value to compare against is set to 100
+     * - Input value is 101
+     * Expected results:
+     * - Validation fails (returns false)
+     * - Error message is generated
+     */
+    #[Test]
+    #[Group('unit')]
     public function testValidateGreaterThan(): void
     {
+        // Arrange
         $this->lte->setValue(100);
-        $this->assertFalse($this->lte->validate(101));
-        $this->assertNotEmpty($this->lte->consumeErrors());
+        $greaterValue = 101;
+
+        // Act
+        $result = $this->lte->validate($greaterValue);
+        $errors = $this->lte->consumeErrors();
+
+        // Assert
+        $this->assertFalse($result);
+        $this->assertNotEmpty($errors);
     }
 
+    /**
+     * What is being tested:
+     * - Lte validator with value equal to comparison value
+     * Conditions/Scenarios:
+     * - Value to compare against is set to 100
+     * - Input value is 100
+     * Expected results:
+     * - Validation passes (returns true)
+     * - No errors are generated
+     */
+    #[Test]
+    #[Group('unit')]
     public function testValidateEqualTo(): void
     {
+        // Arrange
         $this->lte->setValue(100);
-        $this->assertTrue($this->lte->validate(100));
-        $this->assertEmpty($this->lte->consumeErrors());
+        $equalValue = 100;
+
+        // Act
+        $result = $this->lte->validate($equalValue);
+        $errors = $this->lte->consumeErrors();
+
+        // Assert
+        $this->assertTrue($result);
+        $this->assertEmpty($errors);
     }
 
+    /**
+     * What is being tested:
+     * - Lte validator with value lower than comparison value
+     * Conditions/Scenarios:
+     * - Value to compare against is set to 100
+     * - Input value is 99
+     * Expected results:
+     * - Validation passes (returns true)
+     * - No errors are generated
+     */
+    #[Test]
+    #[Group('unit')]
     public function testValidateLowerThan(): void
     {
+        // Arrange
         $this->lte->setValue(100);
-        $this->assertTrue($this->lte->validate(99));
-        $this->assertEmpty($this->lte->consumeErrors());
+        $lowerValue = 99;
+
+        // Act
+        $result = $this->lte->validate($lowerValue);
+        $errors = $this->lte->consumeErrors();
+
+        // Assert
+        $this->assertTrue($result);
+        $this->assertEmpty($errors);
     }
 
+    /**
+     * What is being tested:
+     * - Lte validator with type mismatch (numeric vs DateTime)
+     * Conditions/Scenarios:
+     * - Value to compare against is set to numeric 100
+     * - Input value is DateTime object
+     * Expected results:
+     * - Validation fails (returns false)
+     * - Error message is generated
+     */
+    #[Test]
+    #[Group('unit')]
     public function testValidateMismatchNumericDateTime(): void
     {
+        // Arrange
         $this->lte->setValue(100);
-        $this->assertFalse($this->lte->validate(new \DateTime('now')));
-        $this->assertNotEmpty($this->lte->consumeErrors());
+        $dateTimeValue = new DateTime('now');
+
+        // Act
+        $result = $this->lte->validate($dateTimeValue);
+        $errors = $this->lte->consumeErrors();
+
+        // Assert
+        $this->assertFalse($result);
+        $this->assertNotEmpty($errors);
     }
 
+    /**
+     * What is being tested:
+     * - Lte validator with type mismatch (DateTime vs numeric)
+     * Conditions/Scenarios:
+     * - Value to compare against is set to DateTime object
+     * - Input value is numeric 100
+     * Expected results:
+     * - Validation fails (returns false)
+     * - Error message is generated
+     */
+    #[Test]
+    #[Group('unit')]
     public function testValidateMismatchDateTimeNumeric(): void
     {
-        $this->lte->setValue(new \DateTime('now'));
-        $this->assertFalse($this->lte->validate(100));
-        $this->assertNotEmpty($this->lte->consumeErrors());
+        // Arrange
+        $this->lte->setValue(new DateTime('now'));
+        $numericValue = 100;
+
+        // Act
+        $result = $this->lte->validate($numericValue);
+        $errors = $this->lte->consumeErrors();
+
+        // Assert
+        $this->assertFalse($result);
+        $this->assertNotEmpty($errors);
     }
 
+    /**
+     * What is being tested:
+     * - Lte validator with empty value
+     * Conditions/Scenarios:
+     * - Value to compare against is set to 100
+     * - Input value is empty string
+     * Expected results:
+     * - Validation passes (returns true)
+     * - No errors are generated
+     */
+    #[Test]
+    #[Group('unit')]
     public function testValidateEmpty(): void
     {
+        // Arrange
         $this->lte->setValue(100);
-        $this->assertTrue($this->lte->validate(''));
-        $this->assertEmpty($this->lte->consumeErrors());
-    }
+        $emptyValue = '';
 
+        // Act
+        $result = $this->lte->validate($emptyValue);
+        $errors = $this->lte->consumeErrors();
+
+        // Assert
+        $this->assertTrue($result);
+        $this->assertEmpty($errors);
+    }
 }

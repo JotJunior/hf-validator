@@ -1,6 +1,13 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
 
 namespace Jot\HfValidator;
 
@@ -27,8 +34,7 @@ class BootValidatorsListener implements ListenerInterface
     /**
      * Processes a given event by iterating through all registered validators and applying them.
      *
-     * @param object $event The event object to be processed by the validators.
-     * @return void
+     * @param object $event the event object to be processed by the validators
      */
     public function process(object $event): void
     {
@@ -40,7 +46,7 @@ class BootValidatorsListener implements ListenerInterface
     /**
      * Retrieves an array of validators available for use.
      *
-     * @return array An array of validator class names, each representing a specific type of validation logic.
+     * @return array an array of validator class names, each representing a specific type of validation logic
      */
     private function getValidators(): array
     {
@@ -69,9 +75,8 @@ class BootValidatorsListener implements ListenerInterface
     /**
      * Processes a validator by collecting properties annotated with the given validator class and applying them to the specified event.
      *
-     * @param string $validatorClass The fully qualified class name of the validator to be processed.
-     * @param object $event The event object to which the collected validators will be applied.
-     * @return void
+     * @param string $validatorClass the fully qualified class name of the validator to be processed
+     * @param object $event the event object to which the collected validators will be applied
      */
     private function processValidator(string $validatorClass, object $event): void
     {
@@ -84,5 +89,4 @@ class BootValidatorsListener implements ListenerInterface
             );
         }
     }
-
 }
