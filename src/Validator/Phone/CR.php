@@ -11,22 +11,18 @@ declare(strict_types=1);
 
 namespace Jot\HfValidator\Validator\Phone;
 
-class LU extends AbstractPhoneValidator implements CountryPhoneInterface
+class CR extends AbstractPhoneValidator implements CountryPhoneInterface
 {
-    protected CountryPhonePatterns $pattern = CountryPhonePatterns::LU;
+    protected CountryPhonePatterns $pattern = CountryPhonePatterns::CR;
 
     protected array $validAreaCodes = [
         // Prefixos móveis
-        '6', // Operadoras móveis
+        '6', // Móvel (ICE)
+        '7', // Móvel (ICE)
+        '8', // Móvel (diversos operadores)
 
         // Códigos de área fixos
-        '2', // Luxemburgo cidade e sul
-        '3', // Norte
-        '4', // Leste
-        '5', // Centro
-
-        // Serviços especiais
-        '8', // Números gratuitos
-        '9', // Serviços premium
+        '2', // Fixo (San José e área metropolitana)
+        '4', // Fixo (outras regiões)
     ];
 }

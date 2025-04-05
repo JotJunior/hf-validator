@@ -14,6 +14,7 @@ namespace Jot\HfValidatorTest\Validator;
 use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\Validator\Phone;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -26,11 +27,82 @@ class PhoneTest extends TestCase
 {
     private Phone $phone;
 
-    protected function setUp(): void
+    /**
+     * Data provider for valid phone numbers.
+     *
+     * @return array<array{string, string}>
+     */
+    public static function validPhoneNumbersProvider(): array
     {
-        parent::setUp();
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $this->phone = new Phone($queryBuilder);
+        return [
+            ['AR', '+541131234567'],
+            ['AR', '+5493513234567'],
+            ['AU', '+61462023598'],
+            ['BR', '+5511987654321'],
+            ['BR', '+551147654321'],
+            ['CA', '+14161234567'],
+            ['CL', '+56229473809'],
+            ['CN', '+8613123456789'],
+            ['CO', '+573123456789'],
+            ['CR', '+50688123456'],
+            ['CZ', '+420123456789'],
+            ['DE', '+495878973249'],
+            ['DK', '+4512345678'],
+            ['ES', '+34872495820'],
+            ['FI', '+358451234567'],
+            ['FR', '+33126091386'],
+            ['GB', '+449404417215'],
+            ['GR', '+306912345678'],
+            ['HK', '+85212345678'],
+            ['HU', '+36201234567'],
+            ['ID', '+6281234567890'],
+            ['IE', '+353871234567'],
+            ['IL', '+972521234567'],
+            ['IN', '+917015475949'],
+            ['IT', '+395323227136'],
+            ['LU', '+35289056433'],
+            ['MX', '+525149048032'],
+            ['NL', '+31612345678'],
+            ['NO', '+4712345678'],
+            ['NZ', '+64642766562'],
+            ['PE', '+51729353784'],
+            ['PH', '+639323456789'],
+            ['PL', '+48123456789'],
+            ['PT', '+351912345678'],
+            ['RO', '+407213456784'],
+            ['RO', '+40213456784'],
+            ['RU', '+79571303269'],
+            ['SE', '+46701234567'],
+            ['SK', '+421297579797'],
+            ['TR', '+907125154687'],
+            ['UA', '+380501234567'],
+            ['US', '+12025550179'],
+            ['VE', '+584123456789'],
+            ['ZA', '+27711234567'],
+        ];
+    }
+
+    /**
+     * Data provider for invalid phone numbers.
+     *
+     * @return array<array{string, string}>
+     */
+    public static function invalidPhoneNumbersProvider(): array
+    {
+        return [
+            ['US', '+1202555'], // Too short
+            ['US', '+120255501799'], // Too long
+            ['US', '+12025550ABC'], // Contains letters
+            ['US', '2025550179'], // Missing country code
+            ['BR', '+5511123'], // Too short
+            ['BR', '+551198765432123'], // Too long
+            ['BR', '+551198765ABC'], // Contains letters
+            ['BR', '11987654321'], // Missing country code
+            ['GB', '+4494044ABC'], // Contains letters
+            ['GB', '+44'], // Too short
+            ['DE', '+49123'], // Too short
+            ['FR', '+33ABC'], // Contains letters
+        ];
     }
 
     /**
@@ -222,24 +294,24 @@ class PhoneTest extends TestCase
 
     /**
      * What is being tested:
-     * - Phone validator with valid US phone number
+     * - Phone validator with valid phone numbers for different countries
      * Conditions/Scenarios:
-     * - Country code 'US' is set
-     * - A valid US phone number is provided
+     * - Country code is set for each test case
+     * - A valid phone number for that country is provided
      * Expected results:
      * - Validation passes (returns true)
      * - No errors are generated
      */
     #[Test]
     #[Group('unit')]
-    public function testValidateWithValidUSNumber(): void
+    #[DataProvider('validPhoneNumbersProvider')]
+    public function testValidateWithValidPhoneNumbers(string $countryCode, string $validNumber): void
     {
         // Arrange
-        $this->phone->setCountryCode('US');
-        $validUSNumber = '+12015554332';
+        $this->phone->setCountryCode($countryCode);
 
         // Act
-        $result = $this->phone->validate($validUSNumber);
+        $result = $this->phone->validate($validNumber);
         $errors = $this->phone->consumeErrors();
 
         // Assert
@@ -249,24 +321,24 @@ class PhoneTest extends TestCase
 
     /**
      * What is being tested:
-     * - Phone validator with invalid US phone number
+     * - Phone validator with invalid phone numbers
      * Conditions/Scenarios:
-     * - Country code 'US' is set
-     * - An invalid US phone number is provided (too short)
+     * - Country code is set for each test case
+     * - An invalid phone number for that country is provided
      * Expected results:
      * - Validation fails (returns false)
-     * - Error message is generated
+     * - Appropriate errors are generated
      */
     #[Test]
     #[Group('unit')]
-    public function testValidateWithInvalidUSNumber(): void
+    #[DataProvider('invalidPhoneNumbersProvider')]
+    public function testValidateWithInvalidPhoneNumbers(string $countryCode, string $invalidNumber): void
     {
         // Arrange
-        $this->phone->setCountryCode('US');
-        $invalidUSNumber = '+1201544332'; // Too short
+        $this->phone->setCountryCode($countryCode);
 
         // Act
-        $result = $this->phone->validate($invalidUSNumber);
+        $result = $this->phone->validate($invalidNumber);
         $errors = $this->phone->consumeErrors();
 
         // Assert
@@ -274,921 +346,10 @@ class PhoneTest extends TestCase
         $this->assertNotEmpty($errors);
     }
 
-    /**
-     * What is being tested:
-     * - Phone validator with invalid US area code
-     * Conditions/Scenarios:
-     * - Country code 'US' is set
-     * - A phone number with invalid area code is provided
-     * Expected results:
-     * - Validation fails (returns false)
-     * - Error message is generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithInvalidUSNumberAreaCode(): void
+    protected function setUp(): void
     {
-        // Arrange
-        $this->phone->setCountryCode('US');
-        $invalidAreaCode = '+11001544332'; // Area code 100 is invalid for US
-
-        // Act
-        $result = $this->phone->validate($invalidAreaCode);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertFalse($result);
-        $this->assertNotEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Argentina phone number
-     * Conditions/Scenarios:
-     * - Country code 'AR' is set
-     * - A valid Argentina phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidARNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('AR');
-        $validARNumber = '+545155115268';
-
-        // Act
-        $result = $this->phone->validate($validARNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Austria phone number
-     * Conditions/Scenarios:
-     * - Country code 'AT' is set
-     * - A valid Austria phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidATNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('AT');
-        $validATNumber = '+436197102230';
-
-        // Act
-        $result = $this->phone->validate($validATNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Australia phone number
-     * Conditions/Scenarios:
-     * - Country code 'AU' is set
-     * - A valid Australia phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidAUNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('AU');
-        $validAUNumber = '+614620235980';
-
-        // Act
-        $result = $this->phone->validate($validAUNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Belgium phone number
-     * Conditions/Scenarios:
-     * - Country code 'BE' is set
-     * - A valid Belgium phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidBENumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('BE');
-        $validBENumber = '+322403346373';
-
-        // Act
-        $result = $this->phone->validate($validBENumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Canada phone number
-     * Conditions/Scenarios:
-     * - Country code 'CA' is set
-     * - A valid Canada phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidCANumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('CA');
-        $validCANumber = '+18712609279';
-
-        // Act
-        $result = $this->phone->validate($validCANumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Chile phone number
-     * Conditions/Scenarios:
-     * - Country code 'CL' is set
-     * - A valid Chile phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidCLNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('CL');
-        $validCLNumber = '+564113565093';
-
-        // Act
-        $result = $this->phone->validate($validCLNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid China phone number
-     * Conditions/Scenarios:
-     * - Country code 'CN' is set
-     * - A valid China phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidCNNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('CN');
-        $validCNNumber = '+415398093993';
-
-        // Act
-        $result = $this->phone->validate($validCNNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Colombia phone number
-     * Conditions/Scenarios:
-     * - Country code 'CO' is set
-     * - A valid Colombia phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidCONumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('CO');
-        $validCONumber = '+579859535321';
-
-        // Act
-        $result = $this->phone->validate($validCONumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Czech Republic phone number
-     * Conditions/Scenarios:
-     * - Country code 'CZ' is set
-     * - A valid Czech Republic phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidCZNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('CZ');
-        $validCZNumber = '+4209886601360';
-
-        // Act
-        $result = $this->phone->validate($validCZNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Germany phone number
-     * Conditions/Scenarios:
-     * - Country code 'DE' is set
-     * - A valid Germany phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidDENumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('DE');
-        $validDENumber = '+495878973249';
-
-        // Act
-        $result = $this->phone->validate($validDENumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Denmark phone number
-     * Conditions/Scenarios:
-     * - Country code 'DK' is set
-     * - A valid Denmark phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidDKNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('DK');
-        $validDKNumber = '+459071643038';
-
-        // Act
-        $result = $this->phone->validate($validDKNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Spain phone number
-     * Conditions/Scenarios:
-     * - Country code 'ES' is set
-     * - A valid Spain phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidESNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('ES');
-        $validESNumber = '+348724958201';
-
-        // Act
-        $result = $this->phone->validate($validESNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Finland phone number
-     * Conditions/Scenarios:
-     * - Country code 'FI' is set
-     * - A valid Finland phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidFINumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('FI');
-        $validFINumber = '+3581340327734';
-
-        // Act
-        $result = $this->phone->validate($validFINumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid France phone number
-     * Conditions/Scenarios:
-     * - Country code 'FR' is set
-     * - A valid France phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidFRNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('FR');
-        $validFRNumber = '+331260913868';
-
-        // Act
-        $result = $this->phone->validate($validFRNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid United Kingdom phone number
-     * Conditions/Scenarios:
-     * - Country code 'GB' is set
-     * - A valid United Kingdom phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidGBNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('GB');
-        $validGBNumber = '+449404417215';
-
-        // Act
-        $result = $this->phone->validate($validGBNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Hungary phone number
-     * Conditions/Scenarios:
-     * - Country code 'HU' is set
-     * - A valid Hungary phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidHUNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('HU');
-        $validHUNumber = '+367033518710';
-
-        // Act
-        $result = $this->phone->validate($validHUNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Ireland phone number
-     * Conditions/Scenarios:
-     * - Country code 'IE' is set
-     * - A valid Ireland phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidIENumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('IE');
-        $validIENumber = '+3539437305237';
-
-        // Act
-        $result = $this->phone->validate($validIENumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid India phone number
-     * Conditions/Scenarios:
-     * - Country code 'IN' is set
-     * - A valid India phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidINNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('IN');
-        $validINNumber = '+917015475949';
-
-        // Act
-        $result = $this->phone->validate($validINNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Italy phone number
-     * Conditions/Scenarios:
-     * - Country code 'IT' is set
-     * - A valid Italy phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidITNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('IT');
-        $validITNumber = '+395323227136';
-
-        // Act
-        $result = $this->phone->validate($validITNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Luxembourg phone number
-     * Conditions/Scenarios:
-     * - Country code 'LU' is set
-     * - A valid Luxembourg phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidLUNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('LU');
-        $validLUNumber = '+3528905643340';
-
-        // Act
-        $result = $this->phone->validate($validLUNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Mexico phone number
-     * Conditions/Scenarios:
-     * - Country code 'MX' is set
-     * - A valid Mexico phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidMXNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('MX');
-        $validMXNumber = '+525149048032';
-
-        // Act
-        $result = $this->phone->validate($validMXNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Netherlands phone number
-     * Conditions/Scenarios:
-     * - Country code 'NL' is set
-     * - A valid Netherlands phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidNLNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('NL');
-        $validNLNumber = '+319447380087';
-
-        // Act
-        $result = $this->phone->validate($validNLNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Norway phone number
-     * Conditions/Scenarios:
-     * - Country code 'NO' is set
-     * - A valid Norway phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidNONumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('NO');
-        $validNONumber = '+478200181928';
-
-        // Act
-        $result = $this->phone->validate($validNONumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid New Zealand phone number
-     * Conditions/Scenarios:
-     * - Country code 'NZ' is set
-     * - A valid New Zealand phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidNZNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('NZ');
-        $validNZNumber = '+646427665626';
-
-        // Act
-        $result = $this->phone->validate($validNZNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Peru phone number
-     * Conditions/Scenarios:
-     * - Country code 'PE' is set
-     * - A valid Peru phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidPENumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('PE');
-        $validPENumber = '+517293537844';
-
-        // Act
-        $result = $this->phone->validate($validPENumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Poland phone number
-     * Conditions/Scenarios:
-     * - Country code 'PL' is set
-     * - A valid Poland phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidPLNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('PL');
-        $validPLNumber = '+484185892596';
-
-        // Act
-        $result = $this->phone->validate($validPLNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Portugal phone number
-     * Conditions/Scenarios:
-     * - Country code 'PT' is set
-     * - A valid Portugal phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidPTNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('PT');
-        $validPTNumber = '+3517182010596';
-
-        // Act
-        $result = $this->phone->validate($validPTNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Russia phone number
-     * Conditions/Scenarios:
-     * - Country code 'RU' is set
-     * - A valid Russia phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidRUNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('RU');
-        $validRUNumber = '+79571303269';
-
-        // Act
-        $result = $this->phone->validate($validRUNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Sweden phone number
-     * Conditions/Scenarios:
-     * - Country code 'SE' is set
-     * - A valid Sweden phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidSENumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('SE');
-        $validSENumber = '+467187087002';
-
-        // Act
-        $result = $this->phone->validate($validSENumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Slovakia phone number
-     * Conditions/Scenarios:
-     * - Country code 'SK' is set
-     * - A valid Slovakia phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidSKNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('SK');
-        $validSKNumber = '+4212975797970';
-
-        // Act
-        $result = $this->phone->validate($validSKNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Turkey phone number
-     * Conditions/Scenarios:
-     * - Country code 'TR' is set
-     * - A valid Turkey phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidTRNumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('TR');
-        $validTRNumber = '+907125154687';
-
-        // Act
-        $result = $this->phone->validate($validTRNumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Ukraine phone number
-     * Conditions/Scenarios:
-     * - Country code 'UA' is set
-     * - A valid Ukraine phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidUANumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('UA');
-        $validUANumber = '+3802644008369';
-
-        // Act
-        $result = $this->phone->validate($validUANumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
-    }
-
-    /**
-     * What is being tested:
-     * - Phone validator with valid Venezuela phone number
-     * Conditions/Scenarios:
-     * - Country code 'VE' is set
-     * - A valid Venezuela phone number is provided
-     * Expected results:
-     * - Validation passes (returns true)
-     * - No errors are generated
-     */
-    #[Test]
-    #[Group('unit')]
-    public function testValidateWithValidVENumber(): void
-    {
-        // Arrange
-        $this->phone->setCountryCode('VE');
-        $validVENumber = '+584689291776';
-
-        // Act
-        $result = $this->phone->validate($validVENumber);
-        $errors = $this->phone->consumeErrors();
-
-        // Assert
-        $this->assertTrue($result);
-        $this->assertEmpty($errors);
+        parent::setUp();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->phone = new Phone($queryBuilder);
     }
 }

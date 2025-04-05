@@ -15,14 +15,26 @@ class RU extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::RU;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Prefixos móveis
+        '9',
+        // Códigos de área geográficos (principais cidades)
+        '495', // Moscou
+        '812', // São Petersburgo
+        '343', // Ecaterimburgo
+        '383', // Novosibirsk
+        '846', // Samara
+        '863', // Rostov-on-Don
+        '473', // Voronezh
+        '831', // Nizhny Novgorod
+        '843', // Kazan
+        '861', // Krasnodar
+        '351', // Chelyabinsk
+        '391', // Krasnoyarsk
+        '423', // Vladivostok
+        '342', // Perm
+        '4212', // Khabarovsk
+        // Códigos de serviços especiais
+        '800', // Números gratuitos
+    ];
 }

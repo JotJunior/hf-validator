@@ -15,14 +15,38 @@ class PE extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::PE;
 
-    protected array $validAreaCodes = [];
+    protected array $validAreaCodes = [
+        // Prefixos móveis
+        '9', // Operadoras móveis
 
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+        // Códigos de área fixos
+        '1', // Lima e Callao
+        '41', // Cajamarca
+        '42', // Lambayeque
+        '43', // Ancash
+        '44', // La Libertad
+        '51', // Arequipa
+        '52', // Moquegua
+        '53', // Tacna
+        '54', // Arequipa
+        '56', // Ica
+        '61', // Junin
+        '62', // Huancavelica
+        '63', // Pasco
+        '64', // Huanuco
+        '65', // Ucayali
+        '66', // Loreto
+        '67', // San Martin
+        '73', // Piura
+        '74', // Lambayeque
+        '76', // Amazonas
+        '82', // Cusco
+        '83', // Apurimac
+        '84', // Cusco
+
+        // Serviços especiais
+        '0', // Serviços especiais
+        '80', // Números gratuitos
+        '80', // Serviços premium
+    ];
 }

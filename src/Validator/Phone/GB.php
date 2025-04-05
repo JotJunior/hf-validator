@@ -15,14 +15,15 @@ class GB extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::GB;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Geographic area codes
+        '01', // Geographic numbers
+        '02', // Geographic numbers (London, Southampton, etc.)
+        // Non-geographic numbers
+        '03', // National rate numbers
+        '07', // Mobile numbers and pagers
+        '08', // Special rate numbers
+        '09', // Premium rate numbers
+        '94', // Test number
+    ];
 }

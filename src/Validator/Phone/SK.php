@@ -15,14 +15,40 @@ class SK extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::SK;
 
-    protected array $validAreaCodes = [];
+    protected array $validAreaCodes = [
+        // Prefixos móveis
+        '9', // Operadoras móveis
 
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+        // Códigos de área fixos
+        '2', // Bratislava
+        '31', // Dunajská Streda
+        '32', // Trenčín
+        '33', // Trnava
+        '34', // Senica
+        '35', // Nové Zámky
+        '36', // Levice
+        '37', // Nitra
+        '38', // Topoľčany
+        '41', // Žilina
+        '42', // Považská Bystrica
+        '43', // Martin
+        '44', // Liptovský Mikuláš
+        '45', // Zvolen
+        '46', // Prievidza
+        '47', // Lučenec
+        '48', // Banská Bystrica
+        '51', // Prešov
+        '52', // Poprad
+        '53', // Spišská Nová Ves
+        '54', // Bardejov
+        '55', // Košice
+        '56', // Michalovce
+        '57', // Humenné
+        '58', // Rožňava
+
+        // Serviços especiais
+        '800', // Números gratuitos
+        '850', // Números de custo compartilhado
+        '900', // Serviços premium
+    ];
 }

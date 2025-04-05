@@ -33,16 +33,4 @@ class US extends AbstractPhoneValidator implements CountryPhoneInterface
         901, 903, 904, 906, 907, 908, 909, 910, 912, 913, 914, 915, 916, 917, 918, 919, 920, 925, 928, 929, 930, 931,
         934, 936, 937, 938, 940, 941, 943, 945, 947, 948, 949, 951, 952, 954, 956, 959, 970, 971, 972, 973, 975, 978,
         979, 980, 983, 984, 985, 986, 989];
-
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern::forCountry('US'));
-
-        $areaCode = substr($phone, 2, 3);
-        if (! $this->isValidAreaCode((int) $areaCode)) {
-            return false;
-        }
-
-        return preg_match($regexPattern, $phone) === 1;
-    }
 }

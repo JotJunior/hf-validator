@@ -35,13 +35,18 @@ class Phone extends AbstractValidator implements ValidatorInterface
             return true;
         }
 
-        $validatorClass = __NAMESPACE__ . '\Phone\\' . strtoupper($this->countryCode);
-        if (! class_exists($validatorClass)) {
+        $countryCode = strtoupper($this->countryCode);
+
+        $pattern = Phone\CountryPhonePatterns::forCountry($countryCode);
+        if ($pattern === null) {
             $this->addError('ERROR_INVALID_COUNTRY_CODE', self::ERROR_INVALID_COUNTRY_CODE, [$this->countryCode]);
             return false;
         }
 
-        $isValid = (new $validatorClass())->validate($value);
+        $validatorClass = "\\Jot\\HfValidator\\Validator\\Phone\\{$countryCode}";
+        $validator = new $validatorClass();
+
+        $isValid = $validator->validate($value);
 
         if (! $isValid) {
             $this->addError('ERROR_INVALID_PHONE_NUMBER', self::ERROR_INVALID_PHONE_NUMBER);

@@ -15,14 +15,14 @@ class CO extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::CO;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Códigos de área da Colômbia
+        '1', // Bogotá
+        '2', // Cali, Pasto, Popayán
+        '4', // Medellín, Montería
+        '5', // Barranquilla, Cartagena, Santa Marta, Valledupar, Sincelejo
+        '6', // Pereira, Manizales, Armenia
+        '7', // Cúcuta, Bucaramanga
+        '8', // Ibagué, Neiva, Villavicencio, Tunja
+    ];
 }

@@ -15,14 +15,27 @@ class AT extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::AT;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Principais códigos de área da Áustria
+        '1', // Viena
+        '316', // Graz
+        '732', // Linz
+        '662', // Salzburgo
+        '512', // Innsbruck
+        '463', // Klagenfurt
+        '7242', // Wels
+        '4242', // Villach
+        '2742', // Sankt Pölten
+        '5572', // Dornbirn
+        '2622', // Wiener Neustadt
+        '7252', // Steyr
+        '5522', // Feldkirch
+        '2252', // Baden
+        '5574', // Bregenz
+        '3842', // Leoben
+        '4352', // Wolfsberg
+        '2243', // Klosterneuburg
+        '2732', // Krems
+        '7229', // Traun
+    ];
 }

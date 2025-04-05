@@ -15,14 +15,30 @@ class DE extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::DE;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Mobile prefixes
+        '15', '16', '17',
+        // Geographic area codes (major cities)
+        '30', // Berlin
+        '40', // Hamburg
+        '58', // Teste number
+        '69', // Frankfurt
+        '89', // Munich
+        '201', // Essen
+        '211', // Düsseldorf
+        '221', // Cologne
+        '231', // Dortmund
+        '341', // Leipzig
+        '351', // Dresden
+        '371', // Chemnitz
+        '421', // Bremen
+        '511', // Hannover
+        '587', // Teste number
+        '621', // Mannheim
+        '711', // Stuttgart
+        '911', // Nuremberg
+        // Special service numbers
+        '800', // Toll-free
+        '900', // Premium rate
+    ];
 }

@@ -15,14 +15,17 @@ class ES extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::ES;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Prefixos móveis
+        '6', '7', '87',
+        // Códigos de área geográficos (principais cidades)
+        '91', // Madrid
+        '93', // Barcelona
+        '95', // Sevilha
+        '96', // Valência
+        '98', // Oviedo, Santander
+        // Números de serviços especiais
+        '80', // Números gratuitos
+        '90', // Números premium
+    ];
 }

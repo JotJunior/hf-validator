@@ -15,14 +15,16 @@ class DK extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::DK;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Na Dinamarca, os números de telefone têm 8 dígitos sem códigos de área internos
+        // Os prefixos indicam o tipo de serviço
+        '2', // Telefones móveis
+        '3', // Copenhague e arredores
+        '4', // Zealândia e ilhas
+        '5', // Números especiais
+        '6', // Jutlândia
+        '7', // Jutlândia
+        '8', // Jutlândia oriental e Funen
+        '9', // Jutlândia setentrional
+    ];
 }

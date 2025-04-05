@@ -15,14 +15,13 @@ class AU extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::AU;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Mobile phone prefixes
+        '04', '05', '46',
+        // Geographic area codes
+        '02', // NSW/ACT
+        '03', // VIC/TAS
+        '07', // QLD
+        '08', // WA/SA/NT
+    ];
 }

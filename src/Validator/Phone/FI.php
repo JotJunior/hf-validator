@@ -15,14 +15,21 @@ class FI extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::FI;
 
-    protected array $validAreaCodes = [];
+    protected array $validAreaCodes = [
+        // Prefixos móveis
+        '4', // Operadoras móveis
+        '5', // Operadoras móveis
 
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+        // Códigos de área geográficos
+        '2', // Turku/Pori
+        '3', // Tampere
+        '5', // Região leste (Mikkeli, Kuopio)
+        '6', // Vaasa
+        '8', // Oulu
+        '9', // Helsinki
+
+        // Serviços especiais
+        '7', // Serviços corporativos
+        '1', // Serviços especiais
+    ];
 }

@@ -15,14 +15,48 @@ class CN extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::CN;
 
-    protected array $validAreaCodes = [];
+    protected array $validAreaCodes = [
+        // Prefixos móveis
+        '13', // China Mobile
+        '14', // China Mobile
+        '15', // China Mobile, China Unicom
+        '16', // China Unicom
+        '17', // China Unicom, China Telecom
+        '18', // China Mobile, China Unicom, China Telecom
+        '19', // China Telecom
 
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+        // Códigos de área para grandes cidades
+        '10', // Beijing
+        '20', // Guangzhou
+        '21', // Shanghai
+        '22', // Tianjin
+        '23', // Chongqing
+        '24', // Shenyang
+        '25', // Nanjing
+        '27', // Wuhan
+        '28', // Chengdu
+        '29', // Xi'an
+        '311', // Shijiazhuang
+        '351', // Taiyuan
+        '371', // Zhengzhou
+        '411', // Dalian
+        '431', // Changchun
+        '451', // Harbin
+        '471', // Hohhot
+        '510', // Wuxi
+        '512', // Suzhou
+        '531', // Jinan
+        '532', // Qingdao
+        '551', // Hefei
+        '571', // Hangzhou
+        '591', // Fuzhou
+        '592', // Xiamen
+        '731', // Changsha
+        '755', // Shenzhen
+        '771', // Nanning
+        '791', // Nanchang
+        '851', // Guiyang
+        '871', // Kunming
+        '898', // Haikou
+    ];
 }

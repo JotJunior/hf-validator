@@ -15,14 +15,17 @@ class FR extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::FR;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Mobile prefixes
+        '6', '7',
+        // Geographic area codes
+        '1', // Paris and Île-de-France
+        '2', // Northwest France
+        '3', // Northeast France
+        '4', // Southeast France
+        '5', // Southwest France
+        // Special service numbers
+        '8', // Toll-free and shared-cost numbers
+        '9', // Non-geographic numbers (VoIP)
+    ];
 }

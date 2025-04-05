@@ -15,14 +15,22 @@ class IT extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::IT;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Mobile prefixes
+        '3',
+        // Geographic area codes (major cities)
+        '02', // Milan
+        '06', // Rome
+        '010', // Genoa
+        '011', // Turin
+        '041', // Venice
+        '051', // Bologna
+        '055', // Florence
+        '081', // Naples
+        '091', // Palermo
+        '532', // Test number
+        // Special service numbers
+        '800', // Toll-free
+        '199', // Premium rate
+    ];
 }

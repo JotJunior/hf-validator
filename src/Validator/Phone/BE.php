@@ -15,14 +15,26 @@ class BE extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::BE;
 
-    protected array $validAreaCodes = [];
-
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+    protected array $validAreaCodes = [
+        // Principais códigos de área da Bélgica
+        '2', // Bruxelas
+        '3', // Antuérpia
+        '9', // Gante
+        '4', // Liège
+        '71', // Charleroi
+        '50', // Bruges
+        '81', // Namur
+        '16', // Leuven
+        '65', // Mons
+        '53', // Aalst
+        '15', // Mechelen
+        '56', // Kortrijk
+        '11', // Hasselt
+        '59', // Ostende
+        '69', // Tournai
+        '89', // Genk
+        '51', // Roeselare
+        '87', // Verviers
+        '10', // Wavre
+    ];
 }

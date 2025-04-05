@@ -15,14 +15,40 @@ class SE extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::SE;
 
-    protected array $validAreaCodes = [];
+    protected array $validAreaCodes = [
+        // Prefixos móveis
+        '7', // Operadoras móveis
 
-    /**
-     * @TODO Implement the logic to dynamically validate area codes
-     */
-    public function validate(string $phone): bool
-    {
-        $regexPattern = $this->buildPattern($this->pattern);
-        return preg_match($regexPattern, $phone) === 1;
-    }
+        // Códigos de área fixos
+        '8', // Stockholm
+        '10', // Números não geográficos
+        '11', // Norrköping
+        '13', // Linköping
+        '16', // Eskilstuna
+        '18', // Uppsala
+        '19', // Örebro
+        '21', // Västerås
+        '23', // Falun
+        '26', // Gävle
+        '31', // Göteborg
+        '33', // Borås
+        '35', // Halmstad
+        '36', // Jönköping
+        '40', // Malmö
+        '42', // Helsingborg
+        '44', // Kristianstad
+        '46', // Lund
+        '54', // Karlstad
+        '60', // Sundsvall
+        '63', // Östersund
+        '90', // Umeå
+        '920', // Luleå
+
+        // Serviços especiais
+        '20', // Números gratuitos
+        '77', // Números de custo compartilhado
+        '900', // Serviços premium
+        '939', // Serviços premium
+        '944', // Serviços premium
+    ];
 }

@@ -11,26 +11,26 @@ declare(strict_types=1);
 
 namespace Jot\HfValidator\Validator\Phone;
 
-class NZ extends AbstractPhoneValidator implements CountryPhoneInterface
+class TH extends AbstractPhoneValidator implements CountryPhoneInterface
 {
-    protected CountryPhonePatterns $pattern = CountryPhonePatterns::NZ;
+    protected CountryPhonePatterns $pattern = CountryPhonePatterns::TH;
 
     protected array $validAreaCodes = [
         // Prefixos móveis
-        '2', // Operadoras móveis
+        '6', // Operadoras móveis
+        '8', // Operadoras móveis
+        '9', // Operadoras móveis
 
         // Códigos de área fixos
-        '3', // Ilha Sul
-        '4', // Wellington
-        '6', // Ilha Norte (exceto Auckland e Wellington)
-        '7', // Hamilton/Waikato
-        '9', // Auckland
+        '2', // Bangkok
+        '3', // Nonthaburi, Pathum Thani, Samut Prakan
+        '4', // Nordeste da Tailândia
+        '5', // Norte da Tailândia
+        '7', // Sul da Tailândia
 
         // Serviços especiais
-        '0', // Serviços especiais
-        '1', // Serviços especiais
+        '1', // Serviços especiais e emergência
         '800', // Números gratuitos
-        '83', // Serviços de audioconferência
         '900', // Serviços premium
     ];
 }
