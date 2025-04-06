@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Jot\HfValidatorTest\Validator;
 
 use Jot\HfElastic\QueryBuilder;
+use Jot\HfValidator\Validator\CountryPhonePatterns;
 use Jot\HfValidator\Validator\Phone;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -292,6 +293,31 @@ class PhoneTest extends TestCase
         $this->assertEmpty($errors);
     }
 
+    #[Test]
+    #[Group('unit')]
+    public function testValidateWithLiteralPhoneClass(): void
+    {
+        // Arrange
+        $validator = new Phone\AR();
+
+        // Act
+        $result = $validator->validate('+541131234567');
+        $errors = $this->phone->consumeErrors();
+
+        // Assert
+        $this->assertTrue($result);
+        $this->assertEmpty($errors);
+    }
+
+    #[Test]
+    #[Group('unit')]
+    public function testCountryPhonePatternsValues(): void
+    {
+        // Assert and act
+        $this->assertEquals('BR', CountryPhonePatterns::forCountry('BR')->name);
+
+    }
+
     /**
      * What is being tested:
      * - Phone validator with valid phone numbers for different countries
@@ -352,4 +378,5 @@ class PhoneTest extends TestCase
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $this->phone = new Phone($queryBuilder);
     }
+
 }

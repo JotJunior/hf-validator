@@ -24,8 +24,13 @@
         <exclude>
             <directory suffix=".php">src/Annotation</directory>
             <directory suffix=".php">src/Validator/Phone</directory>
+            <file>src/AbstractValidator.php</file>
+            <file>src/BootValidatorsListener.php</file>
+            <file>src/ConfigProvider.php</file>
             <file>src/ConfigProvider.php</file>
             <file>src/ValidatorChain.php</file>
+            <file>src/Validator/CountryPhonePatterns.php</file>
+            <file>src/Validator/AbstractPhoneValidator.php</file>
         </exclude>
     </source>
 </phpunit>
