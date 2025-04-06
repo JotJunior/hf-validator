@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license  MIT
  */
 
-namespace Jot\HfValidator\Validator\Phone;
+namespace Jot\HfValidator\Validator;
 
 interface CountryPhoneInterface
 {

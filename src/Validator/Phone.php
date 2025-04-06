@@ -37,7 +37,7 @@ class Phone extends AbstractValidator implements ValidatorInterface
 
         $countryCode = strtoupper($this->countryCode);
 
-        $pattern = Phone\CountryPhonePatterns::forCountry($countryCode);
+        $pattern = \Jot\HfValidator\Validator\CountryPhonePatterns::forCountry($countryCode);
         if ($pattern === null) {
             $this->addError('ERROR_INVALID_COUNTRY_CODE', self::ERROR_INVALID_COUNTRY_CODE, [$this->countryCode]);
             return false;

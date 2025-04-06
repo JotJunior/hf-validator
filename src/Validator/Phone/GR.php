@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Jot\HfValidator\Validator\Phone;
 
+use Jot\HfValidator\Validator\AbstractPhoneValidator;
+use Jot\HfValidator\Validator\CountryPhoneInterface;
+use Jot\HfValidator\Validator\CountryPhonePatterns;
+
 class GR extends AbstractPhoneValidator implements CountryPhoneInterface
 {
     protected CountryPhonePatterns $pattern = CountryPhonePatterns::GR;

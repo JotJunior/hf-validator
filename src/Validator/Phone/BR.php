@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Jot\HfValidator\Validator\Phone;
 
+use Jot\HfValidator\Validator\CountryPhoneInterface;
+
 class BR implements CountryPhoneInterface
 {
     private const PHONE_PATTERN = '/^\+55(\d{2})(\d{8,9})$/';
