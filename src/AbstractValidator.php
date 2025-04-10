@@ -14,6 +14,9 @@ namespace Jot\HfValidator;
 use DateTimeInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 
+use function Hyperf\Translation\__;
+
+
 class AbstractValidator
 {
     public const ERROR_MUST_BE_DATETIME = 'ERROR_MUST_BE_DATETIME';
@@ -102,6 +105,7 @@ class AbstractValidator
         } else {
             // Use global translation function with namespace
             $translationKey = 'hf-validator.' . $key;
+
             $message = __(
                 $translationKey,
                 $replacements

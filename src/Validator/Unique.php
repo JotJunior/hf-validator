@@ -16,7 +16,7 @@ use Jot\HfValidator\ValidatorInterface;
 
 class Unique extends AbstractValidator implements ValidatorInterface
 {
-    protected const ERROR_VALUE_ALREADY_USED = 'The given value for %s is already in use.';
+    protected const ERROR_VALUE_ALREADY_USED = 'The given value for :field is already in use.';
 
     protected const ERROR_INVALID_ENTITY_OBJECT = 'The given value is not a valid Entity object.';
 

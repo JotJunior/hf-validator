@@ -71,4 +71,7 @@ return [
 
     // Phone validator messages
     'ERROR_INVALID_PHONE' => 'Número de telefone inválido.',
+
+    'ERROR_VALUE_ALREADY_USED' => 'O valor dado ao campo :0 já foi utilizado.',
+    'ERROR_INVALID_ENTITY_OBJECT' => 'O valor fornecido não é um objeto de entidade válido.',
 ];

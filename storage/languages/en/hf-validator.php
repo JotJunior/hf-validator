@@ -71,4 +71,7 @@ return [
 
     // Phone validator messages
     'ERROR_INVALID_PHONE' => 'Invalid phone number.',
+
+    'ERROR_VALUE_ALREADY_USED' => 'The given value for :0 is already in use.',
+    'ERROR_INVALID_ENTITY_OBJECT' => 'The given value is not a valid Entity object.',
 ];
