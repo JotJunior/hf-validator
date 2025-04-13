@@ -21,21 +21,12 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * and allows for custom error messages when validation fails.
  *
  * @param bool $validateMask specifies whether the CPF mask should be validated
- * @param array $customErrorMessages Custom error messages for validation errors, including:
- *                                   - 'ERROR_INVALID_CPF': Error for an invalid CPF.
- *                                   - 'ERROR_MALFORMED_CPF': Error for a malformed CPF.
- *                                   - 'ERROR_MASK_MISMATCH': Error for a mismatched CPF mask.
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class CPF extends AbstractAnnotation
 {
     public function __construct(
-        public bool $validateMask = false,
-        public array $customErrorMessages = [
-            'ERROR_INVALID_CPF' => null,
-            'ERROR_MALFORMED_CPF' => null,
-            'ERROR_MASK_MISMATCH' => null,
-        ]
+        public bool $validateMask = false
     ) {
     }
 }

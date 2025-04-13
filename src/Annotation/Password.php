@@ -27,8 +27,6 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * @param int $minLength Specifies the minimum length of the password. Default is 8.
  * @param int $maxLength Specifies the maximum length of the password. Default is 50.
  * @param array $special defines the set of special characters to be accepted
- * @param array $customErrorMessages specifies custom error messages for validation failures,
- *                                   keyed by error code
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Password extends AbstractAnnotation
@@ -40,8 +38,7 @@ class Password extends AbstractAnnotation
         public bool $requireSpecial = true,
         public int $minLength = 8,
         public int $maxLength = 50,
-        public string $special = '!@#$%&*_',
-        public array $customErrorMessages = []
+        public string $special = '!@#$%&*_'
     ) {
     }
 }

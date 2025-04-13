@@ -22,20 +22,13 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  *
  * @param string $index the index where the value is checked for existence
  * @param string $field the field within the index to validate the value against
- * @param array $customErrorMessages An array of custom error messages for specific error cases.
- *                                   - 'ERROR_VALUE_DOES_NOT_EXIST': Error message when the value does not exist.
- *                                   - 'ERROR_INVALID_ENTITY': Error message for an invalid entity.
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Exists extends AbstractAnnotation
 {
     public function __construct(
         public string $index,
-        public string $field,
-        public array $customErrorMessages = [
-            'ERROR_VALUE_DOES_NOT_EXIST' => null,
-            'ERROR_INVALID_ENTITY' => null,
-        ]
+        public string $field
     ) {
     }
 }

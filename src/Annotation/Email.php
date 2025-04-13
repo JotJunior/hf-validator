@@ -21,17 +21,12 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * Additionally, it supports optional validation to check if the domain of the email is resolvable.
  *
  * @param bool $checkDomain specifies whether to check if the email domain is resolvable
- * @param array $customErrorMessages customizable error messages for specific validation failures
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Email extends AbstractAnnotation
 {
     public function __construct(
-        public bool $checkDomain = false,
-        public array $customErrorMessages = [
-            'ERROR_INVALID_EMAIL' => null,
-            'ERROR_DOMAIN_NOT_RESOLVABLE' => null,
-        ],
+        public bool $checkDomain = false
     ) {
     }
 }
