@@ -14,17 +14,11 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class CPF extends AbstractValidator implements ValidatorInterface
 {
     public const CPF_LENGTH = 11;
-
-    public const ERROR_INVALID_CPF = 'Invalid CPF.';
-
-    public const ERROR_MALFORMED_CPF = 'Malformed CPF number.';
-
-    public const ERROR_MASK_MISMATCH = 'The provided value does not match the CNPJ mask.';
-
-    public const ERROR_NOT_A_STRING = 'The provided value is not a string.';
 
     private const CPF_MASK_PATTERN = '/^\d{3}\.\d{3}\.\d{3}\-\d{2}$/';
 
@@ -42,18 +36,18 @@ class CPF extends AbstractValidator implements ValidatorInterface
         }
 
         if ($this->validateMask && ! $this->isValidMask($value)) {
-            $this->addError('ERROR_MASK_MISMATCH', self::ERROR_MASK_MISMATCH);
+            $this->errors[] = __('hf-validator.error_mask_mismatch');
         }
 
         $sanitizedCpf = $this->sanitizeCpf($value);
 
         if (! $this->hasValidLength($sanitizedCpf) || $this->hasRepeatedDigits($sanitizedCpf)) {
-            $this->addError('ERROR_MALFORMED_CPF', self::ERROR_MALFORMED_CPF);
+            $this->errors[] = __('hf-validator.error_malformed_cpf');
         }
 
         for ($position = 9; $position < self::CPF_LENGTH; ++$position) {
             if (! $this->validateCpfDigit($sanitizedCpf, $position)) {
-                $this->addError('ERROR_INVALID_CPF', self::ERROR_INVALID_CPF);
+                $this->errors[] = __('hf-validator.error_invalid_cpf');
             }
         }
 

@@ -14,12 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Phone extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_INVALID_PHONE_NUMBER = 'Invalid phone number.';
-
-    public const ERROR_INVALID_COUNTRY_CODE = 'No validator found for country code: %s. Please provide a valid country code.';
-
     private string $countryCode = 'BR';
 
     /**
@@ -37,9 +35,9 @@ class Phone extends AbstractValidator implements ValidatorInterface
 
         $countryCode = strtoupper($this->countryCode);
 
-        $pattern = \Jot\HfValidator\Validator\CountryPhonePatterns::forCountry($countryCode);
+        $pattern = CountryPhonePatterns::forCountry($countryCode);
         if ($pattern === null) {
-            $this->addError('ERROR_INVALID_COUNTRY_CODE', self::ERROR_INVALID_COUNTRY_CODE, [$this->countryCode]);
+            $this->errors[] = __('hf-validator.error_invalid_country_code');
             return false;
         }
 
@@ -49,7 +47,7 @@ class Phone extends AbstractValidator implements ValidatorInterface
         $isValid = $validator->validate($value);
 
         if (! $isValid) {
-            $this->addError('ERROR_INVALID_PHONE_NUMBER', self::ERROR_INVALID_PHONE_NUMBER);
+            $this->errors[] = __('hf-validator.error_invalid_phone_number');
         }
 
         return $isValid;

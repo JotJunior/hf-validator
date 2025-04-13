@@ -14,6 +14,8 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Unique extends AbstractValidator implements ValidatorInterface
 {
     protected const ERROR_VALUE_ALREADY_USED = 'The given value for :field is already in use.';
@@ -42,7 +44,7 @@ class Unique extends AbstractValidator implements ValidatorInterface
         }
 
         if (! $this->isValueUnique($value)) {
-            $this->addError('ERROR_VALUE_ALREADY_USED', self::ERROR_VALUE_ALREADY_USED, [$this->field]);
+            $this->errors[] = __('hf-validator.error_value_already_used', ['field' => $this->property]);
             return false;
         }
 
@@ -62,6 +64,23 @@ class Unique extends AbstractValidator implements ValidatorInterface
     }
 
     /**
+     * Resolves and returns the ID of the given value. If the value is an object, it checks for the existence
+     * of a `getId` method to retrieve the ID. Otherwise, it directly returns the value itself.
+     *
+     * @param mixed $value The value to be processed. It can be an object with a `getId` method or a scalar.
+     * @return mixed returns the ID of the object if it has a `getId` method, the original scalar value, or null if the object is invalid
+     */
+    private function resolveValueId(mixed $value): mixed
+    {
+        if (is_object($value) && ! method_exists($value, 'getId')) {
+            $this->errors[] = __('hf-validator.error_invalid_entity_object');
+            return null;
+        }
+
+        return is_object($value) ? $value->getId() : $value;
+    }
+
+    /**
      * Checks if the given value is unique within the index by querying the database.
      *
      * @param mixed $value The value to be checked. It can be a scalar value or an array of values.
@@ -72,23 +91,7 @@ class Unique extends AbstractValidator implements ValidatorInterface
         return $this->queryBuilder
             ->from($this->index)
             ->where($this->field, '=', $value)
+            ->andWhere('id', '!=', $this->identifier)
             ->count() === 0;
-    }
-
-    /**
-     * Resolves and returns the ID of the given value. If the value is an object, it checks for the existence
-     * of a `getId` method to retrieve the ID. Otherwise, it directly returns the value itself.
-     *
-     * @param mixed $value The value to be processed. It can be an object with a `getId` method or a scalar.
-     * @return mixed returns the ID of the object if it has a `getId` method, the original scalar value, or null if the object is invalid
-     */
-    private function resolveValueId(mixed $value): mixed
-    {
-        if (is_object($value) && ! method_exists($value, 'getId')) {
-            $this->addError('ERROR_INVALID_ENTITY_OBJECT', self::ERROR_INVALID_ENTITY_OBJECT);
-            return null;
-        }
-
-        return is_object($value) ? $value->getId() : $value;
     }
 }

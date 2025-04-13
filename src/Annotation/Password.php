@@ -41,14 +41,7 @@ class Password extends AbstractAnnotation
         public int $minLength = 8,
         public int $maxLength = 50,
         public string $special = '!@#$%&*_',
-        public array $customErrorMessages = [
-            'ERROR_INVALID_PASSWORD' => 'Your password must have at least %s and be between %s and %s characters long.',
-            'ERROR_MATCH_LOWER' => 'one lower case letter',
-            'ERROR_MATCH_UPPER' => 'one upper case letter',
-            'ERROR_MATCH_NUMBER' => 'one number',
-            'ERROR_MATCH_SPECIAL' => 'one special character',
-            'ERROR_LENGTH' => 'between %s and %s characters long',
-        ]
+        public array $customErrorMessages = []
     ) {
     }
 }

@@ -14,6 +14,8 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Url extends AbstractValidator implements ValidatorInterface
 {
     public const ERROR_INVALID_URL = 'Invalid URL';
@@ -75,7 +77,7 @@ class Url extends AbstractValidator implements ValidatorInterface
     {
         $isValid = filter_var($value, FILTER_VALIDATE_URL) !== false;
         if (! $isValid) {
-            $this->addError('ERROR_INVALID_URL', self::ERROR_INVALID_URL);
+            $this->errors[] = __('hf-validator.error_invalid_url');
         }
         return $isValid;
     }
@@ -90,7 +92,7 @@ class Url extends AbstractValidator implements ValidatorInterface
     {
         $isValid = parse_url($url, PHP_URL_SCHEME) === 'https';
         if (! $isValid) {
-            $this->addError('ERROR_URL_MUST_USE_HTTPS_SCHEME', self::ERROR_URL_MUST_USE_HTTPS_SCHEME);
+            $this->errors[] = __('hf-validator.error_url_must_use_https_scheme');
         }
         return $isValid;
     }
@@ -106,7 +108,7 @@ class Url extends AbstractValidator implements ValidatorInterface
         $domain = parse_url($url, PHP_URL_HOST);
         $isValid = $domain !== null && (checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA'));
         if (! $isValid) {
-            $this->addError('ERROR_DOMAIN_NOT_RESOLVABLE', self::ERROR_DOMAIN_NOT_RESOLVABLE);
+            $this->errors[] = __('hf-validator.error_domain_not_resolvable');
         }
         return $isValid;
     }

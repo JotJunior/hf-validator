@@ -14,10 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Required extends AbstractValidator implements ValidatorInterface
 {
-    private const ERROR_FIELD_IS_REQUIRED = 'This field is required.';
-
     /**
      * Validates the provided value based on specific conditions.
      *
@@ -27,7 +27,7 @@ class Required extends AbstractValidator implements ValidatorInterface
     public function validate(mixed $value): bool
     {
         if ($this->shouldAddError($value)) {
-            $this->addError('ERROR_FIELD_IS_REQUIRED', self::ERROR_FIELD_IS_REQUIRED);
+            $this->errors[] = __('hf-validator.error_field_is_required', ['field' => $this->property]);
             return false;
         }
 

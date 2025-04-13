@@ -14,12 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class StringLength extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_MIN_LENGTH = 'Value must be at least %s characters long';
-
-    public const ERROR_MAX_LENGTH = 'Value must be at most %s characters long';
-
     private ?int $min = null;
 
     private ?int $max = null;
@@ -69,7 +67,7 @@ class StringLength extends AbstractValidator implements ValidatorInterface
     private function isStringType(mixed $value): bool
     {
         if (! is_string($value)) {
-            $this->addError('ERROR_MUST_BE_STRING', self::ERROR_MUST_BE_STRING);
+            $this->errors[] = __('hf-validator.error_must_be_string');
             return false;
         }
         return true;
@@ -83,7 +81,7 @@ class StringLength extends AbstractValidator implements ValidatorInterface
     private function validateMinLength(int $valueLength): bool
     {
         if ($this->min !== null && $valueLength < $this->min) {
-            $this->addError('ERROR_MIN_LENGTH', self::ERROR_MIN_LENGTH, [$this->min]);
+            $this->errors[] = __('hf-validator.error_min_length', ['min' => $this->min]);
             return false;
         }
         return true;
@@ -92,7 +90,7 @@ class StringLength extends AbstractValidator implements ValidatorInterface
     private function validateMaxLength(int $valueLength): bool
     {
         if ($this->max !== null && $valueLength > $this->max) {
-            $this->addError('ERROR_MAX_LENGTH', self::ERROR_MAX_LENGTH, [$this->max]);
+            $this->errors[] = __('hf-validator.error_max_length', ['max' => $this->max]);
             return false;
         }
         return true;

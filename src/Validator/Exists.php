@@ -15,12 +15,10 @@ use Jot\HfElastic\QueryBuilder;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Exists extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_INVALID_ENTITY = 'The given value is not a valid Entity object.';
-
-    public const ERROR_VALUE_DOES_NOT_EXIST = 'The given value does not exist in the specified index and field.';
-
     private string $index;
 
     private string $field;
@@ -32,14 +30,14 @@ class Exists extends AbstractValidator implements ValidatorInterface
         }
 
         if ($this->isEntityInvalid($value)) {
-            $this->addError('ERROR_INVALID_ENTITY', self::ERROR_INVALID_ENTITY);
+            $this->errors[] = __('hf-validator.error_invalid_entity');
             return false;
         }
 
         $value = $this->extractEntityId($value);
 
         if (! $this->doesValueExist($value)) {
-            $this->addError('ERROR_VALUE_DOES_NOT_EXIST', self::ERROR_VALUE_DOES_NOT_EXIST);
+            $this->errors[] = __('hf-validator.error_value_does_not_exist');
             return false;
         }
 

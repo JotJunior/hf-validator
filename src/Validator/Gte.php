@@ -14,10 +14,10 @@ namespace Jot\HfValidator\Validator;
 use DateTimeInterface;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Gte extends Gt implements ValidatorInterface
 {
-    public const ERROR_MESSAGE = 'The value must be greater than or equal to %s.';
-
     private DateTimeInterface|float $value;
 
     /**
@@ -37,7 +37,7 @@ class Gte extends Gt implements ValidatorInterface
         }
 
         if ($value < $this->value) {
-            $this->addError('ERROR_MESSAGE', self::ERROR_MESSAGE, [$this->value]);
+            $this->errors[] = __('hf-validator.error_must_be_greater_than_or_equal', ['min' => $value]);
             return false;
         }
 
@@ -59,12 +59,12 @@ class Gte extends Gt implements ValidatorInterface
     protected function isValidType(mixed $value): bool
     {
         if ($this->value instanceof DateTimeInterface && is_numeric($value)) {
-            $this->addError('ERROR_MUST_BE_DATETIME', self::ERROR_MUST_BE_DATETIME, [$this->value]);
+            $this->errors[] = __('hf-validator.error_must_be_datetime');
             return false;
         }
 
         if (is_numeric($this->value) && $value instanceof DateTimeInterface) {
-            $this->addError('ERROR_MUST_BE_NUMERIC', self::ERROR_MUST_BE_NUMERIC, [$this->value]);
+            $this->errors[] = __('hf-validator.error_must_be_numeric');
             return false;
         }
 

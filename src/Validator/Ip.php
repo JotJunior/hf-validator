@@ -14,10 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Ip extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_INVALID_IP_ADDRESS = 'Invalid IP address';
-
     private bool $ipv4 = true;
 
     private bool $ipv6 = true;
@@ -35,7 +35,7 @@ class Ip extends AbstractValidator implements ValidatorInterface
         }
 
         if (! $this->isInvalidIpv4($value) && ! $this->isInvalidIpv6($value)) {
-            $this->addError('ERROR_INVALID_IP_ADDRESS', self::ERROR_INVALID_IP_ADDRESS);
+            $this->errors[] = __('hf-validator.error_invalid_ip_address');
             return false;
         }
         return true;

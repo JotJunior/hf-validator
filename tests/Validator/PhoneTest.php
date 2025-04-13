@@ -28,6 +28,13 @@ class PhoneTest extends TestCase
 {
     private Phone $phone;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->phone = new Phone($queryBuilder);
+    }
+
     /**
      * Data provider for valid phone numbers.
      *
@@ -315,7 +322,6 @@ class PhoneTest extends TestCase
     {
         // Assert and act
         $this->assertEquals('BR', CountryPhonePatterns::forCountry('BR')->name);
-
     }
 
     /**
@@ -371,12 +377,4 @@ class PhoneTest extends TestCase
         $this->assertFalse($result);
         $this->assertNotEmpty($errors);
     }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $this->phone = new Phone($queryBuilder);
-    }
-
 }

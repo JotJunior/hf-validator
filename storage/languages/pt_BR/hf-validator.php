@@ -10,68 +10,70 @@ declare(strict_types=1);
  */
 return [
     // AbstractValidator messages
-    'ERROR_MUST_BE_DATETIME' => 'O valor deve ser um objeto DateTime.',
-    'ERROR_MUST_BE_NUMERIC' => 'O valor deve ser numérico.',
-    'ERROR_MUST_BE_STRING' => 'O valor deve ser uma string.',
-    'ERROR_NOT_A_STRING' => 'O valor fornecido não é uma string.',
+    'error_must_be_datetime' => 'O valor deve ser um objeto DateTime.',
+    'error_must_be_numeric' => 'O valor deve ser numérico.',
+    'error_must_be_string' => 'O valor deve ser uma string.',
+    'error_not_a_string' => 'O valor fornecido não é uma string.',
 
     // Email validator messages
-    'ERROR_INVALID_EMAIL' => 'Email inválido.',
-    'ERROR_DOMAIN_NOT_RESOLVABLE' => 'O nome de domínio para este endereço de email não é resolvível.',
+    'error_invalid_email' => 'Email inválido.',
+    'error_domain_not_resolvable' => 'O nome de domínio para este endereço de email não é resolvível.',
 
     // Required validator messages
-    'ERROR_FIELD_IS_REQUIRED' => 'Este campo é obrigatório.',
+    'error_field_is_required' => 'O campo :field é obrigatório.',
 
     // Password validator messages
-    'ERROR_INVALID_PASSWORD' => 'Sua senha deve ter pelo menos %s e ter entre %s e %s caracteres.',
-    'ERROR_MATCH_LOWER' => 'uma letra minúscula',
-    'ERROR_MATCH_UPPER' => 'uma letra maiúscula',
-    'ERROR_MATCH_NUMBER' => 'um número',
-    'ERROR_MATCH_SPECIAL' => 'um caractere especial',
-    'ERROR_LENGTH' => 'entre %s e %s caracteres',
+    'error_invalid_password' => 'Sua senha deve ter :conditions',
+    'error_match_lower' => 'uma letra minúscula',
+    'error_match_upper' => 'uma letra maiúscula',
+    'error_match_number' => 'um número',
+    'error_match_special' => 'um caractere especial',
+    'error_length' => 'deve ter entre :min e :max caracteres',
 
     // StringLength validator messages
-    'ERROR_MIN_LENGTH' => 'O valor deve ter pelo menos %s caracteres',
-    'ERROR_MAX_LENGTH' => 'O valor deve ter no máximo %s caracteres',
+    'error_min_length' => 'O valor deve ter pelo menos :min caracteres',
+    'error_max_length' => 'O valor deve ter no máximo :max caracteres',
 
     // CNPJ validator messages
-    'ERROR_INVALID_CNPJ' => 'CNPJ inválido.',
-    'ERROR_MASK_MISMATCH' => 'O valor fornecido não corresponde à máscara de CNPJ.',
+    'error_invalid_cnpj' => 'CNPJ inválido.',
+    'error_mask_mismatch' => 'O valor fornecido não corresponde à máscara de CNPJ.',
 
     // CPF validator messages
-    'ERROR_INVALID_CPF' => 'CPF inválido.',
-    'ERROR_CPF_MASK_MISMATCH' => 'O valor fornecido não corresponde à máscara de CPF.',
+    'error_invalid_cpf' => 'CPF inválido.',
+    'error_cpf_mask_mismatch' => 'O valor fornecido não corresponde à máscara de CPF.',
 
     // Enum validator messages
-    'ERROR_INVALID_ENUM' => 'O valor fornecido não é uma opção válida.',
+    'error_invalid_enum' => 'O valor fornecido não é uma opção válida.',
 
     // Exists validator messages
-    'ERROR_VALUE_DOES_NOT_EXIST' => 'O valor fornecido não existe em nossos registros.',
+    'error_value_does_not_exist' => 'O valor fornecido não existe em nossos registros.',
 
     // Gt, Gte, Lt, Lte validator messages
-    'ERROR_MUST_BE_GREATER_THAN' => 'O valor deve ser maior que %s.',
-    'ERROR_MUST_BE_GREATER_THAN_OR_EQUAL' => 'O valor deve ser maior ou igual a %s.',
-    'ERROR_MUST_BE_LESS_THAN' => 'O valor deve ser menor que %s.',
-    'ERROR_MUST_BE_LESS_THAN_OR_EQUAL' => 'O valor deve ser menor ou igual a %s.',
+    'error_must_be_greater_than' => 'O valor deve ser maior que :min.',
+    'error_must_be_greater_than_or_equal' => 'O valor deve ser maior ou igual a :min.',
+    'error_must_be_less_than' => 'O valor deve ser menor que :max.',
+    'error_must_be_less_than_or_equal' => 'O valor deve ser menor ou igual a :max.',
 
     // IP validator messages
-    'ERROR_INVALID_IP' => 'Endereço IP inválido.',
+    'error_invalid_ip' => 'Endereço IP inválido.',
 
     // Range validator messages
-    'ERROR_VALUE_OUT_OF_RANGE' => 'O valor deve estar entre %s e %s.',
+    'error_value_out_of_range' => 'O valor deve estar entre :min e :max.',
 
     // Regex validator messages
-    'ERROR_PATTERN_MISMATCH' => 'O valor fornecido não corresponde ao padrão exigido.',
+    'error_pattern_mismatch' => 'O valor fornecido não corresponde ao padrão exigido.',
 
     // Unique validator messages
-    'ERROR_VALUE_NOT_UNIQUE' => 'O valor fornecido já está em uso.',
+    'error_value_not_unique' => 'O valor fornecido já está em uso.',
 
     // URL validator messages
-    'ERROR_INVALID_URL' => 'URL inválida.',
+    'error_invalid_url' => 'URL inválida.',
 
     // Phone validator messages
-    'ERROR_INVALID_PHONE' => 'Número de telefone inválido.',
+    'error_invalid_phone' => 'Número de telefone inválido.',
 
-    'ERROR_VALUE_ALREADY_USED' => 'O valor dado ao campo :0 já foi utilizado.',
-    'ERROR_INVALID_ENTITY_OBJECT' => 'O valor fornecido não é um objeto de entidade válido.',
+    'error_value_already_used' => 'O valor dado ao campo :field já foi utilizado.',
+    'error_invalid_entity_object' => 'O valor fornecido não é um objeto de entidade válido.',
+
+    'error_value_out_of_predefined_list' => 'O valor fornecido deve ser um dos seguintes: :list.',
 ];

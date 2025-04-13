@@ -14,12 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Regex extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_INVALID_REGEX = 'Invalid regex pattern.';
-
-    public const ERROR_INVALID_VALUE = 'Invalid value. Check if your string matches the following pattern:';
-
     private string $pattern;
 
     /**
@@ -35,13 +33,13 @@ class Regex extends AbstractValidator implements ValidatorInterface
         }
 
         if (@preg_match($this->pattern, '') !== false) {
-            $this->addError('ERROR_INVALID_REGEX', self::ERROR_INVALID_REGEX, [$this->pattern]);
+            $this->errors[] = __('hf-validator.error_invalid_pattern');
         }
 
         $isValid = preg_match($this->pattern, $value) > 0;
 
         if (! $isValid) {
-            $this->addError('ERROR_INVALID_VALUE', self::ERROR_INVALID_VALUE, [$this->pattern]);
+            $this->errors[] = __('hf-validator.error_pattern_mismatch');
         }
 
         return $isValid;

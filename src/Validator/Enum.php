@@ -14,10 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Enum extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_VALUE_OUT_OF_PREDEFINED_LIST = 'The value must be one of the following: %s';
-
     private array $values;
 
     /**
@@ -33,7 +33,7 @@ class Enum extends AbstractValidator implements ValidatorInterface
         }
 
         if (! in_array($value, $this->values)) {
-            $this->addError('ERROR_VALUE_OUT_OF_PREDEFINED_LIST', self::ERROR_VALUE_OUT_OF_PREDEFINED_LIST, [implode(', ', $this->values)]);
+            $this->errors[] = __('hf-validator.error_value_out_of_predefined_list', ['list' => implode(', ', $this->values)]);
             return false;
         }
 

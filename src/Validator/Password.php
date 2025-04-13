@@ -14,20 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Password extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_INVALID_PASSWORD = 'Your password must have at least %s and be between %s and %s characters long.';
-
-    public const ERROR_MATCH_LOWER = 'one lower case letter';
-
-    public const ERROR_MATCH_UPPER = 'one upper case letter';
-
-    public const ERROR_MATCH_NUMBER = 'one number';
-
-    public const ERROR_MATCH_SPECIAL = 'one special character';
-
-    public const ERROR_LENGTH = 'between %s and %s characters long';
-
     private bool $requireLower = true;
 
     private bool $requireUpper = true;
@@ -97,12 +87,6 @@ class Password extends AbstractValidator implements ValidatorInterface
         return $this;
     }
 
-    protected function addValidationMessage(): void
-    {
-        $conditions = $this->getIndividualConditions();
-        $this->addError('ERROR_INVALID_PASSWORD', self::ERROR_INVALID_PASSWORD, $conditions);
-    }
-
     protected function createPattern(): string
     {
         $pattern = [''];
@@ -123,23 +107,30 @@ class Password extends AbstractValidator implements ValidatorInterface
         return sprintf('/^%s$/', implode('', $pattern));
     }
 
+    protected function addValidationMessage(): void
+    {
+        $conditions = $this->getIndividualConditions();
+        $this->errors[] = __('hf-validator.error_invalid_password', ['conditions' => implode(', ', $conditions)]);
+    }
+
     private function getIndividualConditions(): array
     {
         $conditions = [];
 
+        $conditions[] = __('hf-validator.error_length', ['min' => $this->minLength, 'max' => $this->maxLength]);
+
         if ($this->requireLower) {
-            $conditions[] = $this->customErrorMessages['ERROR_MATCH_LOWER'] ?? self::ERROR_MATCH_LOWER;
+            $conditions[] = __('hf-validator.error_match_lower');
         }
         if ($this->requireUpper) {
-            $conditions[] = $this->customErrorMessages['ERROR_MATCH_UPPER'] ?? self::ERROR_MATCH_UPPER;
+            $conditions[] = __('hf-validator.error_match_upper');
         }
         if ($this->requireNumber) {
-            $conditions[] = $this->customErrorMessages['ERROR_MATCH_NUMBER'] ?? self::ERROR_MATCH_NUMBER;
+            $conditions[] = __('hf-validator.error_match_number');
         }
         if ($this->requireSpecial) {
-            $conditions[] = $this->customErrorMessages['ERROR_MATCH_SPECIAL'] ?? self::ERROR_MATCH_SPECIAL;
+            $conditions[] = __('hf-validator.error_match_special');
         }
-        $conditions[] = sprintf($this->customErrorMessages['ERROR_LENGTH'] ?? self::ERROR_LENGTH, $this->minLength, $this->maxLength);
 
         return $conditions;
     }

@@ -14,13 +14,11 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class CNPJ extends AbstractValidator implements ValidatorInterface
 {
     public const CNPJ_LENGTH = 14;
-
-    public const ERROR_INVALID_CNPJ = 'Invalid CNPJ.';
-
-    public const ERROR_MASK_MISMATCH = 'The provided value does not match the CNPJ mask.';
 
     private const CNPJ_MASK_PATTERN = '/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/';
 
@@ -48,14 +46,14 @@ class CNPJ extends AbstractValidator implements ValidatorInterface
         }
 
         if ($this->validateMask && ! $this->isValidMask($value)) {
-            $this->addError('ERROR_MASK_MISMATCH', self::ERROR_MASK_MISMATCH);
+            $this->errors[] = __('hf-validator.error_mask_mismatch');
             return false;
         }
 
         $sanitizedCNPJ = $this->sanitizeCNPJ($value);
 
         if (! $this->isValidFormat($sanitizedCNPJ)) {
-            $this->addError('ERROR_INVALID_CNPJ', self::ERROR_INVALID_CNPJ);
+            $this->errors[] = __('hf-validator.error_invalid_cnpj');
             return false;
         }
 
@@ -65,7 +63,7 @@ class CNPJ extends AbstractValidator implements ValidatorInterface
         $isValid = $sanitizedCNPJ[12] == $firstVerifierDigit && $sanitizedCNPJ[13] == $secondVerifierDigit;
 
         if (! $isValid) {
-            $this->addError('ERROR_INVALID_CNPJ', self::ERROR_INVALID_CNPJ);
+            $this->errors[] = __('hf-validator.error_invalid_cnpj');
         }
 
         return $isValid;

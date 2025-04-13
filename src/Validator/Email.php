@@ -14,12 +14,10 @@ namespace Jot\HfValidator\Validator;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Email extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_INVALID_EMAIL = 'Invalid email';
-
-    public const ERROR_DOMAIN_NOT_RESOLVABLE = 'The domain name for this email address is not resolvable.';
-
     private bool $checkDomain = false;
 
     private array $mostCommonDomainNames = [
@@ -41,7 +39,7 @@ class Email extends AbstractValidator implements ValidatorInterface
         }
 
         if (! is_string($value)) {
-            $this->addError('ERROR_NOT_A_STRING', self::ERROR_NOT_A_STRING);
+            $this->errors[] = __('hf-validator.error_not_a_string');
             return false;
         }
 
@@ -50,7 +48,7 @@ class Email extends AbstractValidator implements ValidatorInterface
         }
 
         if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $this->addError('ERROR_INVALID_EMAIL', self::ERROR_INVALID_EMAIL);
+            $this->errors[] = __('hf-validator.error_invalid_email');
             return false;
         }
 
@@ -68,7 +66,7 @@ class Email extends AbstractValidator implements ValidatorInterface
         $domainName = $this->extractDomain($email);
 
         if (empty($domainName)) {
-            $this->addError('ERROR_DOMAIN_NOT_RESOLVABLE', self::ERROR_DOMAIN_NOT_RESOLVABLE);
+            $this->errors[] = __('hf-validator.error_domain_not_resolvable');
             return false;
         }
 
@@ -77,7 +75,7 @@ class Email extends AbstractValidator implements ValidatorInterface
         }
 
         if (! $this->isResolvableDomain($domainName)) {
-            $this->addError('ERROR_DOMAIN_NOT_RESOLVABLE', self::ERROR_DOMAIN_NOT_RESOLVABLE);
+            $this->errors[] = __('hf-validator.error_domain_not_reesolvable');
             return false;
         }
 
@@ -87,7 +85,7 @@ class Email extends AbstractValidator implements ValidatorInterface
     private function extractDomain(string $email): ?string
     {
         if (! str_contains($email, '@')) {
-            $this->addError('ERROR_DOMAIN_NOT_RESOLVABLE', self::ERROR_DOMAIN_NOT_RESOLVABLE);
+            $this->errors[] = __('hf-validator.error_domain_not_resolvable');
             return null;
         }
         $domain = substr(strrchr($email, '@'), 1);

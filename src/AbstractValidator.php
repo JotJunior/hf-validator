@@ -11,23 +11,13 @@ declare(strict_types=1);
 
 namespace Jot\HfValidator;
 
-use DateTimeInterface;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
-
-use function Hyperf\Translation\__;
-
 
 class AbstractValidator
 {
-    public const ERROR_MUST_BE_DATETIME = 'ERROR_MUST_BE_DATETIME';
+    protected ?string $identifier = null;
 
-    public const ERROR_MUST_BE_NUMERIC = 'ERROR_MUST_BE_NUMERIC';
-
-    public const ERROR_MUST_BE_STRING = 'ERROR_MUST_BE_STRING';
-
-    public const ERROR_NOT_A_STRING = 'ERROR_NOT_A_STRING';
-
-    protected array $customErrorMessages = [];
+    protected ?string $property = null;
 
     protected bool $onCreate = true;
 
@@ -42,7 +32,13 @@ class AbstractValidator
     ) {
     }
 
-    public function consumeErrors(): array
+    public function setContext(string $context): self
+    {
+        $this->context = sprintf('on%s', ucfirst($context));
+        return $this;
+    }
+
+    public function consumeErrors(?string $property = null): array
     {
         $errors = $this->errors;
         $this->resetErrors();
@@ -52,24 +48,6 @@ class AbstractValidator
     public function resetErrors(): void
     {
         $this->errors = [];
-    }
-
-    public function setCustomErrorMessages(array $customErrorMessages): AbstractValidator
-    {
-        $this->customErrorMessages = $customErrorMessages;
-        return $this;
-    }
-
-    public function setOnCreate(bool $onCreate): self
-    {
-        $this->onCreate = $onCreate;
-        return $this;
-    }
-
-    public function setOnUpdate(bool $onUpdate): self
-    {
-        $this->onUpdate = $onUpdate;
-        return $this;
     }
 
     public function onCreate(): self
@@ -84,39 +62,15 @@ class AbstractValidator
         return $this;
     }
 
-    /**
-     * Adds an error message to the errors array based on a specified key, default message, and optional replacements.
-     *
-     * @param string $key the key used to fetch the error message from the custom error messages
-     * @param null|string $default the default error message to use if no message exists for the provided key
-     * @param array $replacements an associative array of replacements to format the error message
-     */
-    protected function addError(string $key, ?string $default = null, array $replacements = []): void
+    public function setIdentifier(string $identifier): self
     {
-        $replacements = array_map(fn ($value) => match (true) {
-            $value instanceof DateTimeInterface => $value->format('Y-m-d\TH:i:s.uO'),
-            is_array($value), is_object($value) => json_encode($value),
-            default => $value,
-        }, $replacements);
+        $this->identifier = $identifier;
+        return $this;
+    }
 
-        // Check if custom error message exists for this key
-        if (isset($this->customErrorMessages[$key])) {
-            $message = vsprintf($this->customErrorMessages[$key], $replacements);
-        } else {
-            // Use global translation function with namespace
-            $translationKey = 'hf-validator.' . $key;
-
-            $message = __(
-                $translationKey,
-                $replacements
-            );
-
-            // Fallback to default message if translation is not available
-            if ($message === $translationKey && $default !== null) {
-                $message = vsprintf($default, $replacements);
-            }
-        }
-
-        $this->errors[] = $message;
+    public function setProperty(?string $property): self
+    {
+        $this->property = $property;
+        return $this;
     }
 }

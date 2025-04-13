@@ -15,10 +15,10 @@ use DateTimeInterface;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
 
+use function Hyperf\Translation\__;
+
 class Range extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_OUT_OF_RANGE = 'The value must be between %s and %s.';
-
     private DateTimeInterface|float $min;
 
     private DateTimeInterface|float $max;
@@ -42,7 +42,7 @@ class Range extends AbstractValidator implements ValidatorInterface
         $isValid = $value >= $this->min && $value <= $this->max;
 
         if (! $isValid) {
-            $this->addError('ERROR_OUT_OF_RANGE', self::ERROR_OUT_OF_RANGE, [$this->min, $this->max]);
+            $this->errors[] = __('hf-validator.error_value_out_of_range', ['min' => $this->min, 'max' => $this->max]);
         }
 
         return $isValid;
@@ -69,12 +69,12 @@ class Range extends AbstractValidator implements ValidatorInterface
     protected function isValidType(mixed $value): bool
     {
         if (is_numeric($value) && ($this->min instanceof DateTimeInterface || $this->max instanceof DateTimeInterface)) {
-            $this->addError('ERROR_MUST_BE_DATETIME', self::ERROR_MUST_BE_DATETIME, [$this->min, $this->max]);
+            $this->errors[] = __('hf-validator.error_must_be_datetime');
             return false;
         }
 
         if ($value instanceof DateTimeInterface && (is_numeric($this->min) || is_numeric($this->max))) {
-            $this->addError('ERROR_MUST_BE_NUMERIC', self::ERROR_MUST_BE_NUMERIC, [$this->min, $this->max]);
+            $this->errors[] = __('hf-validator.error_must_be_numeric');
             return false;
         }
 
