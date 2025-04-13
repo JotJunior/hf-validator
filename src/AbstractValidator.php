@@ -19,10 +19,6 @@ class AbstractValidator
 
     protected ?string $property = null;
 
-    protected bool $onCreate = true;
-
-    protected bool $onUpdate = true;
-
     protected string $context = 'onCreate';
 
     protected array $errors = [];
