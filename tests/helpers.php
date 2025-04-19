@@ -8,11 +8,23 @@ declare(strict_types=1);
  * @link     https://github.com/JotJunior/hf-validator
  * @license  MIT
  */
-if (! function_exists('__')) {
-    function __(string $key, array $replace = [], ?string $locale = null): string
-    {
-        // For testing, we'll just return the key or apply replacements to default messages
-        // This simulates what happens when a translation is not found
-        return $key;
-    }
-}
+
+use Hyperf\Context\ApplicationContext;
+use Mockery\MockInterface;
+use Psr\Container\ContainerInterface;
+use Hyperf\Contract\TranslatorInterface;
+
+// Mock the container and translator for tests
+$container = Mockery::mock(ContainerInterface::class);
+$translator = Mockery::mock(TranslatorInterface::class);
+
+// Setup the translator mock to return the translation key as is
+$translator->shouldReceive('trans')->andReturnUsing(function ($key) {
+    return $key;
+});
+
+// Setup the container to return our translator mock
+$container->shouldReceive('get')->with(TranslatorInterface::class)->andReturn($translator);
+
+// Set the mocked container in the ApplicationContext
+ApplicationContext::setContainer($container);

@@ -4,6 +4,7 @@ project_settings:
   base_namespace: "{composer_autoload_psr4}\\Test"
   source_dir: "src/"
   test_dir: "tests/"
+  content_language: "en"
 naming_conventions:
   test_class_suffix: "Test"
   test_method_prefix: "test"
