@@ -18,12 +18,6 @@ use function Hyperf\Translation\__;
 
 class Url extends AbstractValidator implements ValidatorInterface
 {
-    public const ERROR_INVALID_URL = 'Invalid URL';
-
-    public const ERROR_URL_MUST_USE_HTTPS_SCHEME = 'URL must use https scheme';
-
-    public const ERROR_DOMAIN_NOT_RESOLVABLE = 'Domain not resolvable';
-
     private bool $forceHttps = false;
 
     private bool $checkDomain = false;

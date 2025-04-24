@@ -17,6 +17,8 @@ class AbstractValidator
 {
     protected ?string $identifier = null;
 
+    protected ?string $tenantId = null;
+
     protected ?string $property = null;
 
     protected string $context = 'onCreate';
@@ -25,7 +27,8 @@ class AbstractValidator
 
     public function __construct(
         protected QueryBuilderInterface $queryBuilder
-    ) {
+    )
+    {
     }
 
     public function setContext(string $context): self
@@ -69,4 +72,16 @@ class AbstractValidator
         $this->property = $property;
         return $this;
     }
+
+    public function getTenantId(): ?string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(?string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
+    }
+
+
 }

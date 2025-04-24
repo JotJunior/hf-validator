@@ -24,8 +24,6 @@ class Exists extends AbstractValidator implements ValidatorInterface
 
     private string $level;
 
-    private ?string $tenantId;
-
     public function validate(mixed $value): bool
     {
         if (empty($value)) {
@@ -101,13 +99,4 @@ class Exists extends AbstractValidator implements ValidatorInterface
         $this->level = $level;
     }
 
-    public function getTenantId(): ?string
-    {
-        return $this->tenantId;
-    }
-
-    public function setTenantId(?string $tenantId): void
-    {
-        $this->tenantId = $tenantId;
-    }
 }

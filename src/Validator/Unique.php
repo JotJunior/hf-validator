@@ -17,17 +17,11 @@ use function Hyperf\Translation\__;
 
 class Unique extends AbstractValidator implements ValidatorInterface
 {
-    protected const ERROR_VALUE_ALREADY_USED = 'The given value for :field is already in use.';
-
-    protected const ERROR_INVALID_ENTITY_OBJECT = 'The given value is not a valid Entity object.';
-
     private string $index;
 
     private string $field;
 
     private string $level = 'tenant';
-
-    private ?string $tenantId = null;
 
     /**
      * Validates the given value by checking its resolved ID and ensuring its uniqueness.
@@ -111,13 +105,4 @@ class Unique extends AbstractValidator implements ValidatorInterface
         $this->level = $level;
     }
 
-    public function getTenantId(): ?string
-    {
-        return $this->tenantId;
-    }
-
-    public function setTenantId(?string $tenantId): void
-    {
-        $this->tenantId = $tenantId;
-    }
 }
