@@ -75,12 +75,13 @@ class Unique extends AbstractValidator implements ValidatorInterface
     {
         $query = $this->queryBuilder
             ->from($this->index)
-            ->where($this->field, '=', $value)
+            ->where($this->field, $value)
             ->andWhere('id', '!=', $this->identifier);
         if ($this->level === 'tenant') {
             $query->andWhere('tenant.id', '=', $this->tenantId);
         }
-        return $query->count();
+
+        return $query->count() === 0;
     }
 
     public function setIndex(string $index): Unique

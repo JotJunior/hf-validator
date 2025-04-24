@@ -78,9 +78,10 @@ class AbstractValidator
         return $this->tenantId;
     }
 
-    public function setTenantId(?string $tenantId): void
+    public function setTenantId(?string $tenantId): self
     {
         $this->tenantId = $tenantId;
+        return $this;
     }
 
 

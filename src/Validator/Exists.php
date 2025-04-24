@@ -57,24 +57,14 @@ class Exists extends AbstractValidator implements ValidatorInterface
 
     private function doesValueExist(mixed $value): bool
     {
-        $query = $this->queryBuilder->from($this->index);
-        $this->addConditionsToQuery($query, $value);
+        $query = $this->queryBuilder
+            ->from($this->index)
+            ->where($this->field, $value);
         if ($this->level === 'tenant') {
-            $query->andWhere('tenant.id', '=', $this->tenantId);
+            $query->andWhere('tenant.id', $this->tenantId);
         }
-        return $query->count() > 0;
-    }
 
-    private function addConditionsToQuery(QueryBuilderInterface $query, mixed $value): void
-    {
-        if (is_array($value)) {
-            foreach ($value as $item) {
-                $condition = is_array($item) && isset($item['id']) ? $item['id'] : $item;
-                $query->orWhere($this->field, '=', $condition);
-            }
-        } else {
-            $query->where($this->field, '=', $value);
-        }
+        return $query->count() > 0;
     }
 
     public function setIndex(string $index): Exists

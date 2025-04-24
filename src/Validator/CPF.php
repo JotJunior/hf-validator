@@ -31,7 +31,7 @@ class CPF extends AbstractValidator implements ValidatorInterface
         }
 
         if (! is_string($value)) {
-            $this->errors[] = self::ERROR_NOT_A_STRING;
+            $this->errors[] = __('hf-validator.error_not_a_string');
             return false;
         }
 
