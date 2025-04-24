@@ -22,13 +22,15 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  *
  * @param string $index the index where the value is checked for existence
  * @param string $field the field within the index to validate the value against
+ * @param string $context the context applied to validation. May be 'global' or 'tenant'
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Exists extends AbstractAnnotation
 {
     public function __construct(
         public string $index,
-        public string $field
+        public string $field,
+        public string $level = 'tenant' // global|tenant
     ) {
     }
 }

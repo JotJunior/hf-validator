@@ -23,13 +23,16 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * Attributes:
  * @param string $index the name of the index to check the uniqueness constraint against
  * @param string $field the name of the field for which the uniqueness constraint applies
+ * @param string $level the level applied to validation. May be 'global' or 'tenant'
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Unique extends AbstractAnnotation
 {
     public function __construct(
         public string $index,
-        public string $field
-    ) {
+        public string $field,
+        public string $level = 'tenant' // global|tenant
+    )
+    {
     }
 }

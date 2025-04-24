@@ -13,7 +13,6 @@ namespace Jot\HfValidator\Validator;
 
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
-
 use function Hyperf\Translation\__;
 
 class Unique extends AbstractValidator implements ValidatorInterface
@@ -25,6 +24,10 @@ class Unique extends AbstractValidator implements ValidatorInterface
     private string $index;
 
     private string $field;
+
+    private string $level = 'tenant';
+
+    private ?string $tenantId = null;
 
     /**
      * Validates the given value by checking its resolved ID and ensuring its uniqueness.
@@ -49,18 +52,6 @@ class Unique extends AbstractValidator implements ValidatorInterface
         }
 
         return true;
-    }
-
-    public function setIndex(string $index): Unique
-    {
-        $this->index = $index;
-        return $this;
-    }
-
-    public function setField(string $field): Unique
-    {
-        $this->field = $field;
-        return $this;
     }
 
     /**
@@ -88,10 +79,45 @@ class Unique extends AbstractValidator implements ValidatorInterface
      */
     private function isValueUnique(mixed $value): bool
     {
-        return $this->queryBuilder
+        $query = $this->queryBuilder
             ->from($this->index)
             ->where($this->field, '=', $value)
-            ->andWhere('id', '!=', $this->identifier)
-            ->count() === 0;
+            ->andWhere('id', '!=', $this->identifier);
+        if ($this->level === 'tenant') {
+            $query->andWhere('tenant.id', '=', $this->tenantId);
+        }
+        return $query->count();
+    }
+
+    public function setIndex(string $index): Unique
+    {
+        $this->index = $index;
+        return $this;
+    }
+
+    public function setField(string $field): Unique
+    {
+        $this->field = $field;
+        return $this;
+    }
+
+    public function getLevel(): string
+    {
+        return $this->level;
+    }
+
+    public function setLevel(string $level): void
+    {
+        $this->level = $level;
+    }
+
+    public function getTenantId(): ?string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(?string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 }

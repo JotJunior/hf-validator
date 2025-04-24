@@ -58,7 +58,7 @@ class AbstractValidator
         return $this;
     }
 
-    public function setIdentifier(string $identifier): self
+    public function setIdentifier(?string $identifier): self
     {
         $this->identifier = $identifier;
         return $this;

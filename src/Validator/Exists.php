@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace Jot\HfValidator\Validator;
 
-use Jot\HfElastic\QueryBuilder;
+use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
-
 use function Hyperf\Translation\__;
 
 class Exists extends AbstractValidator implements ValidatorInterface
@@ -22,6 +21,10 @@ class Exists extends AbstractValidator implements ValidatorInterface
     private string $index;
 
     private string $field;
+
+    private string $level;
+
+    private ?string $tenantId;
 
     public function validate(mixed $value): bool
     {
@@ -44,18 +47,6 @@ class Exists extends AbstractValidator implements ValidatorInterface
         return true;
     }
 
-    public function setIndex(string $index): Exists
-    {
-        $this->index = $index;
-        return $this;
-    }
-
-    public function setField(string $field): Exists
-    {
-        $this->field = $field;
-        return $this;
-    }
-
     private function isEntityInvalid(mixed $value): bool
     {
         return is_object($value) && ! method_exists($value, 'getId');
@@ -70,11 +61,13 @@ class Exists extends AbstractValidator implements ValidatorInterface
     {
         $query = $this->queryBuilder->from($this->index);
         $this->addConditionsToQuery($query, $value);
-
+        if ($this->level === 'tenant') {
+            $query->andWhere('tenant.id', '=', $this->tenantId);
+        }
         return $query->count() > 0;
     }
 
-    private function addConditionsToQuery(QueryBuilder $query, mixed $value): void
+    private function addConditionsToQuery(QueryBuilderInterface $query, mixed $value): void
     {
         if (is_array($value)) {
             foreach ($value as $item) {
@@ -84,5 +77,37 @@ class Exists extends AbstractValidator implements ValidatorInterface
         } else {
             $query->where($this->field, '=', $value);
         }
+    }
+
+    public function setIndex(string $index): Exists
+    {
+        $this->index = $index;
+        return $this;
+    }
+
+    public function setField(string $field): Exists
+    {
+        $this->field = $field;
+        return $this;
+    }
+
+    public function getLevel(): string
+    {
+        return $this->level;
+    }
+
+    public function setLevel(string $level): void
+    {
+        $this->level = $level;
+    }
+
+    public function getTenantId(): ?string
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(?string $tenantId): void
+    {
+        $this->tenantId = $tenantId;
     }
 }
