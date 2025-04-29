@@ -40,6 +40,7 @@ return [
 
     // CPF validator messages
     'error_invalid_cpf' => 'CPF inválido.',
+    'error_malformed_cpf' => 'CPF inválido',
     'error_cpf_mask_mismatch' => 'El valor proporcionado no coincide con la máscara de CPF.',
 
     // Enum validator messages
