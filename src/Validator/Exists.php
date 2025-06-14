@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Jot\HfValidator\Validator;
 
-use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
+
 use function Hyperf\Translation\__;
 
 class Exists extends AbstractValidator implements ValidatorInterface
@@ -45,28 +45,6 @@ class Exists extends AbstractValidator implements ValidatorInterface
         return true;
     }
 
-    private function isEntityInvalid(mixed $value): bool
-    {
-        return is_object($value) && ! method_exists($value, 'getId');
-    }
-
-    private function extractEntityId(mixed $value): mixed
-    {
-        return is_object($value) && method_exists($value, 'getId') ? $value->getId() : $value;
-    }
-
-    private function doesValueExist(mixed $value): bool
-    {
-        $query = $this->queryBuilder
-            ->from($this->index)
-            ->where($this->field, $value);
-        if ($this->level === 'tenant') {
-            $query->andWhere('tenant.id', $this->tenantId);
-        }
-
-        return $query->count() > 0;
-    }
-
     public function setIndex(string $index): Exists
     {
         $this->index = $index;
@@ -89,4 +67,25 @@ class Exists extends AbstractValidator implements ValidatorInterface
         $this->level = $level;
     }
 
+    private function isEntityInvalid(mixed $value): bool
+    {
+        return is_object($value) && ! method_exists($value, 'getId');
+    }
+
+    private function extractEntityId(mixed $value): mixed
+    {
+        return is_object($value) && method_exists($value, 'getId') ? $value->getId() : $value;
+    }
+
+    private function doesValueExist(mixed $value): bool
+    {
+        $query = $this->queryBuilder
+            ->from($this->index)
+            ->where($this->field, $value);
+        if ($this->level === 'tenant') {
+            $query->andWhere('tenant.id', $this->tenantId);
+        }
+
+        return $query->count() > 0;
+    }
 }

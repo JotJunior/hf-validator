@@ -38,6 +38,28 @@ class Required extends AbstractValidator implements ValidatorInterface
         return true;
     }
 
+    public function isOnCreate(): bool
+    {
+        return $this->onCreate;
+    }
+
+    public function setOnCreate(bool $onCreate): Required
+    {
+        $this->onCreate = $onCreate;
+        return $this;
+    }
+
+    public function isOnUpdate(): bool
+    {
+        return $this->onUpdate;
+    }
+
+    public function setOnUpdate(bool $onUpdate): Required
+    {
+        $this->onUpdate = $onUpdate;
+        return $this;
+    }
+
     private function shouldAddError(mixed $value): bool
     {
         return $this->{$this->context} && ($this->isNull($value) || $this->isEmptyString($value) || $this->isInvalidObject($value));
@@ -75,28 +97,4 @@ class Required extends AbstractValidator implements ValidatorInterface
     {
         return is_object($value) && method_exists($value, 'getId') && empty($value->getId());
     }
-
-    public function isOnCreate(): bool
-    {
-        return $this->onCreate;
-    }
-
-    public function setOnCreate(bool $onCreate): Required
-    {
-        $this->onCreate = $onCreate;
-        return $this;
-    }
-
-    public function isOnUpdate(): bool
-    {
-        return $this->onUpdate;
-    }
-
-    public function setOnUpdate(bool $onUpdate): Required
-    {
-        $this->onUpdate = $onUpdate;
-        return $this;
-    }
-
-
 }

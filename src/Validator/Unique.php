@@ -13,6 +13,7 @@ namespace Jot\HfValidator\Validator;
 
 use Jot\HfValidator\AbstractValidator;
 use Jot\HfValidator\ValidatorInterface;
+
 use function Hyperf\Translation\__;
 
 class Unique extends AbstractValidator implements ValidatorInterface
@@ -48,6 +49,28 @@ class Unique extends AbstractValidator implements ValidatorInterface
         return true;
     }
 
+    public function setIndex(string $index): Unique
+    {
+        $this->index = $index;
+        return $this;
+    }
+
+    public function setField(string $field): Unique
+    {
+        $this->field = $field;
+        return $this;
+    }
+
+    public function getLevel(): string
+    {
+        return $this->level;
+    }
+
+    public function setLevel(string $level): void
+    {
+        $this->level = $level;
+    }
+
     /**
      * Resolves and returns the ID of the given value. If the value is an object, it checks for the existence
      * of a `getId` method to retrieve the ID. Otherwise, it directly returns the value itself.
@@ -75,35 +98,14 @@ class Unique extends AbstractValidator implements ValidatorInterface
     {
         $query = $this->queryBuilder
             ->from($this->index)
-            ->where($this->field, $value)
-            ->andWhere('id', '!=', $this->identifier);
+            ->where($this->field, $value);
+        if ($this->identifier) {
+            $query->andWhere('id', '!=', $this->identifier);
+        }
         if ($this->level === 'tenant') {
             $query->andWhere('tenant.id', '=', $this->tenantId);
         }
 
         return $query->count() === 0;
     }
-
-    public function setIndex(string $index): Unique
-    {
-        $this->index = $index;
-        return $this;
-    }
-
-    public function setField(string $field): Unique
-    {
-        $this->field = $field;
-        return $this;
-    }
-
-    public function getLevel(): string
-    {
-        return $this->level;
-    }
-
-    public function setLevel(string $level): void
-    {
-        $this->level = $level;
-    }
-
 }

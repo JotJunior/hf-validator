@@ -14,10 +14,10 @@ namespace Jot\HfValidatorTest\Validator;
 use Jot\HfElastic\Contracts\QueryBuilderInterface;
 use Jot\HfValidator\Validator\Url;
 use Mockery;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * What is being tested:
@@ -35,6 +35,7 @@ use PHPUnit\Framework\Attributes\Test;
  * - Valid URLs should be accepted
  * - When HTTPS is enforced, non-HTTPS URLs should be rejected
  * - When domain checking is enabled, non-resolvable domains should be rejected
+ * @internal
  */
 #[CoversClass(Url::class)]
 #[Group('unit')]

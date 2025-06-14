@@ -8,11 +8,9 @@ declare(strict_types=1);
  * @link     https://github.com/JotJunior/hf-validator
  * @license  MIT
  */
-
 use Hyperf\Context\ApplicationContext;
-use Mockery\MockInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
+use Psr\Container\ContainerInterface;
 
 // Mock the container and translator for tests
 $container = Mockery::mock(ContainerInterface::class);

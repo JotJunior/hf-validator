@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Gekom APIv2.
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
  *
- * @document https://github.com/JotJunior/gekom
- * @author   Joao Zanon <jot@jot.con.br>
- * @link     https://gekom.com.br
- * @license  Private
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
  */
 
 namespace Jot\HfValidator\Validator;

@@ -27,8 +27,7 @@ class AbstractValidator
 
     public function __construct(
         protected QueryBuilderInterface $queryBuilder
-    )
-    {
+    ) {
     }
 
     public function setContext(string $context): self
@@ -83,6 +82,4 @@ class AbstractValidator
         $this->tenantId = $tenantId;
         return $this;
     }
-
-
 }

@@ -21,7 +21,6 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  *
  * @property DateTimeInterface|float $value The value against which the property is validated.
  *                                          It can be a datetime or numeric value.
- *
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Lte extends AbstractAnnotation

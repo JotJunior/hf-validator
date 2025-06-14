@@ -1,16 +1,25 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the hf_validator module, a package build for Hyperf framework that is responsible validate the entities properties.
+ *
+ * @author   Joao Zanon <jot@jot.com.br>
+ * @link     https://github.com/JotJunior/hf-validator
+ * @license  MIT
+ */
 
 namespace Jot\HfValidator\Test\Validator;
 
 use Jot\HfValidator\Validator\CPF;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 #[CoversClass(CPF::class)]
 class CPFTest extends TestCase
 {
@@ -33,7 +42,7 @@ class CPFTest extends TestCase
      */
     #[Test]
     #[Group('unit')]
-    public function testValidate_ValidCPF_ReturnsTrue(): void
+    public function testValidateValidCPFReturnsTrue(): void
     {
         // Arrange
         $validCpf = '12345678909';
@@ -55,7 +64,7 @@ class CPFTest extends TestCase
      */
     #[Test]
     #[Group('unit')]
-    public function testValidate_InvalidCPF_ReturnsFalse(): void
+    public function testValidateInvalidCPFReturnsFalse(): void
     {
         // Arrange
         $invalidCpf = '12345678900';
@@ -77,7 +86,7 @@ class CPFTest extends TestCase
      */
     #[Test]
     #[Group('unit')]
-    public function testValidate_EmptyCPF_ReturnsTrue(): void
+    public function testValidateEmptyCPFReturnsTrue(): void
     {
         // Arrange
         $emptyCpf = '';
@@ -99,7 +108,7 @@ class CPFTest extends TestCase
      */
     #[Test]
     #[Group('unit')]
-    public function testValidate_NonStringCPF_ReturnsFalse(): void
+    public function testValidateNonStringCPFReturnsFalse(): void
     {
         // Arrange
         $nonStringCpf = 12345678909;
@@ -121,7 +130,7 @@ class CPFTest extends TestCase
      */
     #[Test]
     #[Group('unit')]
-    public function testValidate_ValidMaskedCPF_ReturnsTrue(): void
+    public function testValidateValidMaskedCPFReturnsTrue(): void
     {
         // Arrange
         $validMaskedCpf = '123.456.789-09';
@@ -144,7 +153,7 @@ class CPFTest extends TestCase
      */
     #[Test]
     #[Group('unit')]
-    public function testValidate_InvalidMaskedCPF_ReturnsFalse(): void
+    public function testValidateInvalidMaskedCPFReturnsFalse(): void
     {
         // Arrange
         $invalidMaskedCpf = '123.456.789-00';
@@ -167,7 +176,7 @@ class CPFTest extends TestCase
      */
     #[Test]
     #[Group('unit')]
-    public function testValidate_ValidMaskedCPFValidateMaskFalse_ReturnsTrue(): void
+    public function testValidateValidMaskedCPFValidateMaskFalseReturnsTrue(): void
     {
         // Arrange
         $validMaskedCpf = '123.456.789-09';

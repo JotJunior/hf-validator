@@ -32,7 +32,6 @@ class Unique extends AbstractAnnotation
         public string $index,
         public string $field,
         public string $level = 'tenant' // global|tenant
-    )
-    {
+    ) {
     }
 }
