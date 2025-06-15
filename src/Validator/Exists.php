@@ -82,7 +82,7 @@ class Exists extends AbstractValidator implements ValidatorInterface
         $query = $this->queryBuilder
             ->from($this->index)
             ->where($this->field, $value);
-        if ($this->level === 'tenant') {
+        if ($this->level === 'tenant' && $this->index !== 'tenants') {
             $query->andWhere('tenant.id', $this->tenantId);
         }
 
