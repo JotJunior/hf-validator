@@ -47,7 +47,7 @@ return [
     'error_invalid_enum' => 'O valor fornecido não é uma opção válida.',
 
     // Exists validator messages
-    'error_value_does_not_exist' => 'O valor fornecido não existe em nossos registros.',
+    'error_value_does_not_exist' => 'O valor :value não existe no índice :index.',
 
     // Gt, Gte, Lt, Lte validator messages
     'error_must_be_greater_than' => 'O valor deve ser maior que :min.',

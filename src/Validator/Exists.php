@@ -31,14 +31,14 @@ class Exists extends AbstractValidator implements ValidatorInterface
         }
 
         if ($this->isEntityInvalid($value)) {
-            $this->errors[] = __('hf-validator.error_invalid_entity');
+            $this->errors[] = __('hf-validator.error_invalid_entity', ['index' => $this->index, 'value' => (string) $value]);
             return false;
         }
 
         $value = $this->extractEntityId($value);
 
         if (! $this->doesValueExist($value)) {
-            $this->errors[] = __('hf-validator.error_value_does_not_exist');
+            $this->errors[] = __('hf-validator.error_value_does_not_exist', ['index' => $this->index, 'value' => (string) $value]);
             return false;
         }
 

@@ -47,7 +47,7 @@ return [
     'error_invalid_enum' => 'El valor proporcionado no es una opción válida.',
 
     // Exists validator messages
-    'error_value_does_not_exist' => 'El valor proporcionado no existe en nuestros registros.',
+    'error_value_does_not_exist' => 'El valor proporcionado :index => :value no existe en nuestros registros.',
 
     // Gt, Gte, Lt, Lte validator messages
     'error_must_be_greater_than' => 'El valor debe ser mayor que :min.',

@@ -47,7 +47,7 @@ return [
     'error_invalid_enum' => 'The provided value is not a valid option.',
 
     // Exists validator messages
-    'error_value_does_not_exist' => 'The provided value does not exist in our records.',
+    'error_value_does_not_exist' => 'The provided value for :index with value :value does not exist in our records.',
 
     // Gt, Gte, Lt, Lte validator messages
     'error_must_be_greater_than' => 'Value must be greater than :min.',
